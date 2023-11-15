@@ -47,3 +47,24 @@ Make sure you have `arlocal` running. See above.
 4. click on newly created project
 5. in vscode/code editor navigate to example and spin up localserver for the index.html file of the example. In vscode there is a `golive` button in the bottom right corner.
 6. put the url eg `localhost:5500/examples/box-dom/index.html` in to the url input on the project page.
+
+---
+
+## Examples
+
+### tiles
+This example uses no framework and renders out things using the DOM. It will work with any project. It represents each document as a box and each property as a color in the box. This way you can easily visualise the data on the project.
+
+You can hover over properties to view the data.
+
+[code](./examples/tiles/index.html)
+
+### rectangles
+This example uses `p5.js` and renders out gray rectangles. You can click to `create` a new rectangle.
+
+[code](./examples/rectangles/index.html)
+
+### cuboids
+This example uses `three.js` and renders out 100 cuboids with specific colors. You can change the color by clicking
+
+[code](./examples/cuboids/index.html)
