@@ -65,6 +65,6 @@ This example uses `p5.js` and renders out gray rectangles. You can click to `cre
 [code](./examples/rectangles/index.html)
 
 ### cuboids
-This example uses `three.js` and renders out 100 cuboids with specific colors. You can change the color by clicking
+This example uses `three.js` and renders out 100 cuboids with specific colors. You can `update` the color by clicking
 
 [code](./examples/cuboids/index.html)
