@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Example Project</title>
+</head>
+
+<body>
+  <style>
+    #blocks {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .collection {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 1rem;
+    }
+
+    .document {
+      display: flex;
+      flex-direction: column;
+      height: 3em;
+      width: 3em;
+      margin: 0.1em;
+      border: black solid 1px;
+      background-color: red;
+    }
+
+    .property {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    .property:hover {
+      border: red solid 1px;
+    }
+
+    #info {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: black;
+      color: white;
+      padding: 1rem;
+    }
+  </style>
+  <script type="module" defer>
+    import { Olta } from "../../lib/olta.module.js"
+
+    const blocksEL = document.querySelector("#blocks")
+    const infoEl = document.querySelector("#info")
+
+    const olta = Olta()
+
+    // render initial state
+    renderState(olta.state)
+
+    // re-render when state updates
+    olta.onUpdate(renderState)
+
+    // or see the state as json
+    // renderStateAsJSON(olta.state)
+    // olta.onUpdate(renderStateAsJSON)
+
+    function renderState(state) {
+      let template = ""
+      const collections = state?.projectState?.collections
+      if (!collections) {
+        return
+      }
+
+      // Loop over all collections (note there is only one for now)
+      for (const collectionId in collections) {
+        template += `<div class="collection ${collectionId}">`
+        const collection = collections[collectionId]
+
+        // Loop over all documents in collection
+        for (const documentId in collection) {
+          template += `<div class="document ${documentId}">`
+          const doc = collection[documentId]
+
+          // Loop over every property in document
+          for (const key in doc) {
+            if (key === "_id" || key === "_creator" || key === "_sortKey") {
+              continue
+            }
+            // get the config for this property
+            const { min, max } = state.projectState.configs[collectionId].properties[key]
+
+            const value = doc[key]
+
+            // convert bigInt to a hex decimal color
+            const v = mapRange(parseBigInt(value), Number(min), Number(max), 0, 16777215)
+            const color = (Math.floor(v).toString(16)).padStart(6, 0)
+
+            template += `<span
+              class="property ${key}"
+              style="background-color: #${color};"
+              data-value="${parseBigInt(value)}"
+              data-key="${key}"
+              data-doc="${documentId}"
+              >
+              </span>`
+          }
+          template += `</div>`
+        }
+        template += `</div>`
+      }
+
+      blocksEL.innerHTML = template
+
+      blocksEL.addEventListener("mouseover", (e) => {
+        if (!e.target.classList.contains("property")) {
+          return
+        }
+        const dataset = e.target.dataset
+        infoEl.innerText = `[${dataset.doc}]\n${dataset.key}: ${dataset.value}`
+      })
+    }
+
+    // eg "255n" -> 255
+    function parseBigInt(value) {
+      return Number(value.slice(0, -1))
+    }
+
+    // Map function to convert the range
+    function mapRange(value, inMin, inMax, outMin, outMax) {
+      return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
+    }
+
+    function renderStateAsJSON(state) {
+      const stateEl = document.querySelector("#state")
+      stateEl.innerText = JSON.stringify(state, undefined, 4)
+    }
+  </script>
+  <code id="state" style="white-space: pre; font-size: 8px;"></code>
+  <div id="blocks"></div>
+  <div id="info">hover over colors to see data</div>
+</body>
+
+</html>

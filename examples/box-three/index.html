@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>three.js webgl - interactive cubes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      background-color: #000000;
+      color: #444;
+      margin: 0px;
+    }
+
+    a {
+      color: #08f;
+    }
+
+    .loading {
+      position: fixed;
+      margin: auto;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loading">LOADING...</div>
+  <script type="module">
+    // Adapted from https://threejs.org/examples/#webgl_interactive_cubes to use olta
+
+    /**
+       This example renders 100 cuboids with random rotation and position.
+       The colors of the cuboids are derived from an Olta smart contract.
+       A cuboids color can be "cycled" between colors (white, red, green, blue) by clicking the mouse.
+     */
+
+    import * as THREE from "../../lib/three.module.min.js"
+    import { Olta } from "../../lib/olta.module.js"
+
+    let cuboids = []
+    const palette = [
+      0xffffff,
+      0xff0000,
+      0x00ff00,
+      0x0000ff
+    ]
+
+    let camera, scene, raycaster, renderer
+
+    let INTERSECTED
+    let theta = 0
+
+    const pointer = new THREE.Vector2()
+    const radius = 5
+
+    const loading = document.querySelector(".loading")
+
+    // initialize olta instance
+    const olta = Olta()
+
+    // setup what to do on an update
+    olta.onUpdate(() => {
+      console.log("STATE", olta.state)
+
+      loading.hidden = true
+
+      const colors = olta.getAll("colors")
+      colors.forEach((color, i) => {
+        const cuboid = cuboids[i]
+
+        // update color
+        cuboid.material.color.setHex(palette[parseBigInt(color.value)])
+
+        // store reference to color document
+        cuboid.name = color._id
+      })
+    })
+
+    // click on a cuboid to update color
+    window.addEventListener("click", () => {
+      console.log("HELLLO")
+      // make sure the mouse is hovering a cuboid
+      if (!INTERSECTED || INTERSECTED.name === "") {
+        return
+      }
+
+      // retrieve the document id from intersected object
+      const id = INTERSECTED.name
+
+      // cycle over palette indexes
+      const currentIndex = palette.indexOf(INTERSECTED.material.color.getHex())
+      const value = currentIndex < palette.length - 1 ? currentIndex + 1 + "n" : 0 + "n"
+
+      // create color document to update
+      const doc = { id, value }
+
+      // send the update
+      olta.update("colors", doc)
+    })
+
+    init()
+    animate()
+
+    function init() {
+
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100)
+
+      scene = new THREE.Scene()
+      scene.background = new THREE.Color(0xf0f0f0)
+
+      const light = new THREE.AmbientLight(0xffffff, 1)
+      const light2 = new THREE.DirectionalLight(0xffffff, 1)
+      light.position.set(1, 1, 1).normalize()
+      scene.add(light, light2)
+
+      const geometry = new THREE.BoxGeometry()
+
+      for (let i = 0; i < 100; i++) {
+        const object = new THREE.Mesh(
+          geometry,
+          new THREE.MeshLambertMaterial({ color: palette[0] })
+        )
+
+        object.position.x = Math.random() * 40 - 20
+        object.position.y = Math.random() * 40 - 20
+        object.position.z = Math.random() * 40 - 20
+
+        object.rotation.x = Math.random() * 2 * Math.PI
+        object.rotation.y = Math.random() * 2 * Math.PI
+        object.rotation.z = Math.random() * 2 * Math.PI
+
+        object.scale.x = Math.random() + 0.5
+        object.scale.y = Math.random() + 0.5
+        object.scale.z = Math.random() + 0.5
+
+        cuboids.push(object)
+        scene.add(object)
+      }
+
+      raycaster = new THREE.Raycaster()
+
+      renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      document.body.appendChild(renderer.domElement)
+
+      document.addEventListener('mousemove', onPointerMove)
+
+      window.addEventListener('resize', onWindowResize)
+
+    }
+
+    function onWindowResize() {
+
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+
+      renderer.setSize(window.innerWidth, window.innerHeight)
+
+    }
+
+    function onPointerMove(event) {
+
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1
+      pointer.y = - (event.clientY / window.innerHeight) * 2 + 1
+
+    }
+
+    //
+
+    function animate() {
+
+      requestAnimationFrame(animate)
+
+      render()
+
+    }
+
+    function render() {
+
+      theta += 0.1
+
+      camera.position.x = radius * Math.sin(THREE.MathUtils.degToRad(theta))
+      camera.position.y = radius * Math.sin(THREE.MathUtils.degToRad(theta))
+      camera.position.z = radius * Math.cos(THREE.MathUtils.degToRad(theta))
+      camera.lookAt(scene.position)
+
+      camera.updateMatrixWorld()
+
+      // find intersections
+
+      raycaster.setFromCamera(pointer, camera)
+
+      const intersects = raycaster.intersectObjects(scene.children, false)
+
+      if (intersects.length > 0) {
+
+        if (INTERSECTED != intersects[0].object) {
+
+          if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex)
+
+          INTERSECTED = intersects[0].object
+          INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex()
+          INTERSECTED.material.emissive.setHex(0xff0000)
+
+        }
+
+      } else {
+
+        if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex)
+
+        INTERSECTED = null
+
+      }
+
+      renderer.render(scene, camera)
+
+    }
+
+    // eg "255n" -> 255
+    function parseBigInt(value) {
+      return Number(value.slice(0, -1))
+    }
+
+  </script>
+
+</body>
+
+</html>
