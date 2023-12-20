@@ -30,6 +30,8 @@ npx arlocal
 
 This will install arlocal onto your machine and run an instance of it on the port number 1984. Next time you run it it simply spins up an instance.
 
+> **Note** `arlocal` produces logs the folder it is run from. If you run it in the same folder as your project please watch out for it triggering hot reloads when not desired.
+
 ---
 
 ## Getting Started
