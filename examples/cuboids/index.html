@@ -62,11 +62,14 @@
 
     // setup what to do on an update
     olta.onUpdate(() => {
-      console.log("STATE", olta.state)
 
       loading.hidden = true
 
       const colors = olta.getAll("colors")
+      if (!colors || colors.length === 0) {
+        return
+      }
+
       colors.forEach((color, i) => {
         const cuboid = cuboids[i]
 
@@ -80,7 +83,6 @@
 
     // click on a cuboid to update color
     window.addEventListener("click", () => {
-      console.log("HELLLO")
       // make sure the mouse is hovering a cuboid
       if (!INTERSECTED || INTERSECTED.name === "") {
         return
