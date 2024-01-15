@@ -1,0 +1,28 @@
+{
+  "name": "@olta/olta",
+  "version": "0.0.1",
+  "description": "A small js library that communicates with olta dashboard, making it easy to create decentralized public artworks",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olta-art/olta.js.git"
+  },
+  "keywords": [
+    "olta",
+    "art",
+    "js"
+  ],
+  "author": "olta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olta-art/olta.js/issues"
+  },
+  "homepage": "https://github.com/olta-art/olta.js#readme"
+}
