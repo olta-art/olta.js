@@ -30,17 +30,15 @@
 
       olta = Olta()
       olta.onUpdate(() => {
-        boxes = olta.getAll("boxes")
-          // TODO: removing bigInt from the smart contract will remove this biz
-          ?.map(box => {
-            // parse values
-            box.size = parseBigInt(box.size) * scale
-            box.color = parseBigInt(box.color)
-            box.x = parseBigInt(box.x)
-            box.y = parseBigInt(box.y)
+        const latestBoxes = olta.getAll("boxes")
 
-            return box
-          })
+        // only update the boxes if there are new boxes
+        if(!latestBoxes || latestBoxes.length < 1) {
+          return
+        }
+
+        // update the boxes with latest data from olta, making sure to parse the values
+        boxes = parseBoxes(latestBoxes)
 
         // trigger p5 draw function
         loop()
@@ -69,14 +67,13 @@
     }
 
     function mouseClicked() {
-      // create a random new box based on mouse position
-      // TODO: removing bigInt will do away with the + "n" biz
-      const box = {
-        color: Math.floor(Math.random() * 255) + "n",
-        size: Math.floor(1 + (Math.random() * 2)) + "n",
-        x: Math.floor(mouseX / windowWidth * 100) + "n",
-        y: Math.floor(mouseY / windowHeight * 100) + "n"
-      }
+      // create a random new box based on mouse position, making sure to format all the values
+      const box = formatBox({
+        color: Math.random() * 255,
+        size: 1 + (Math.random() * 2),
+        x: mouseX / windowWidth * 100,
+        y: mouseY / windowHeight * 100
+      })
 
       // create a new box at the location of the mouse
       olta.create("boxes", box)
@@ -91,6 +88,38 @@
     // utils
     function percentageOf(value, percent) {
       return value * (percent * 0.01)
+    }
+
+    // parse the boxes from olta.update so we can use them in p5
+    // for example the x value will change from x: "50n" to x: 50
+    function parseBoxes(boxes) {
+      if(!boxes || boxes.length < 1){
+        return []
+      }
+
+      return boxes.map(box => {
+        box.size = parseBigInt(box.size) * scale
+        box.color = parseBigInt(box.color)
+        box.x = parseBigInt(box.x)
+        box.y = parseBigInt(box.y)
+
+        return box
+      })
+    }
+
+    // format the box so we can send it to olta
+    // for example the x value will change from x:50 to x:"50n"
+    function formatBox(box) {
+      return {
+        color: formatBigInt(box.color),
+        size: formatBigInt(box.size),
+        x: formatBigInt(box.x),
+        y: formatBigInt(box.y)
+      }
+    }
+
+    function formatBigInt(value) {
+      return Math.floor(value) + "n"
     }
 
     function parseBigInt(value) {
