@@ -37,6 +37,7 @@
      */
 
     import * as THREE from "../../lib/three.module.min.js"
+    import { OrbitControls } from "../../lib/three.orbit-controls.js"
     import { Olta } from "../../lib/olta.module.js"
 
     let cuboids = []
@@ -47,7 +48,7 @@
       0x0000ff
     ]
 
-    let camera, scene, raycaster, renderer
+    let camera, scene, raycaster, renderer, controls
 
     let INTERSECTED
     let theta = 0
@@ -111,6 +112,7 @@
     function init() {
 
       camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100)
+      camera.position.z = 20
 
       scene = new THREE.Scene()
       scene.background = new THREE.Color(0xf0f0f0)
@@ -122,23 +124,21 @@
 
       const geometry = new THREE.BoxGeometry()
 
+      const size = 15
+
       for (let i = 0; i < 100; i++) {
         const object = new THREE.Mesh(
           geometry,
           new THREE.MeshLambertMaterial({ color: palette[0] })
         )
 
-        object.position.x = rand() * 40 - 20
-        object.position.y = rand() * 40 - 20
-        object.position.z = rand() * 40 - 20
+        object.position.x = rand() * size - size/2
+        object.position.y = rand() * size - size/2
+        object.position.z = rand() * size - size/2
 
-        object.rotation.x = rand() * 2 * Math.PI
-        object.rotation.y = rand() * 2 * Math.PI
-        object.rotation.z = rand() * 2 * Math.PI
-
-        object.scale.x = rand() + 0.5
-        object.scale.y = rand() + 0.5
-        object.scale.z = rand() + 0.5
+        object.scale.x = 1 + rand()
+        object.scale.y = 1 + rand()
+        object.scale.z = 1 + rand()
 
         cuboids.push(object)
         scene.add(object)
@@ -149,12 +149,14 @@
       renderer = new THREE.WebGLRenderer({ antialias: true })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(window.innerWidth, window.innerHeight)
+
+      controls = new OrbitControls( camera, renderer.domElement );
+
       document.body.appendChild(renderer.domElement)
 
       document.addEventListener('mousemove', onPointerMove)
 
       window.addEventListener('resize', onWindowResize)
-
     }
 
     function onWindowResize() {
