@@ -60,6 +60,9 @@
     // initialize olta instance
     const olta = Olta()
 
+    // create a seeded random number generator with "cuboids" as the seed
+    const rand = seededRandom("cuboids")
+
     // setup what to do on an update
     olta.onUpdate(() => {
 
@@ -125,17 +128,17 @@
           new THREE.MeshLambertMaterial({ color: palette[0] })
         )
 
-        object.position.x = Math.random() * 40 - 20
-        object.position.y = Math.random() * 40 - 20
-        object.position.z = Math.random() * 40 - 20
+        object.position.x = rand() * 40 - 20
+        object.position.y = rand() * 40 - 20
+        object.position.z = rand() * 40 - 20
 
-        object.rotation.x = Math.random() * 2 * Math.PI
-        object.rotation.y = Math.random() * 2 * Math.PI
-        object.rotation.z = Math.random() * 2 * Math.PI
+        object.rotation.x = rand() * 2 * Math.PI
+        object.rotation.y = rand() * 2 * Math.PI
+        object.rotation.z = rand() * 2 * Math.PI
 
-        object.scale.x = Math.random() + 0.5
-        object.scale.y = Math.random() + 0.5
-        object.scale.z = Math.random() + 0.5
+        object.scale.x = rand() + 0.5
+        object.scale.y = rand() + 0.5
+        object.scale.z = rand() + 0.5
 
         cuboids.push(object)
         scene.add(object)
@@ -155,19 +158,15 @@
     }
 
     function onWindowResize() {
-
       camera.aspect = window.innerWidth / window.innerHeight
       camera.updateProjectionMatrix()
 
       renderer.setSize(window.innerWidth, window.innerHeight)
-
     }
 
     function onPointerMove(event) {
-
       pointer.x = (event.clientX / window.innerWidth) * 2 - 1
       pointer.y = - (event.clientY / window.innerHeight) * 2 + 1
-
     }
 
     //
@@ -181,15 +180,6 @@
     }
 
     function render() {
-
-      theta += 0.1
-
-      camera.position.x = radius * Math.sin(THREE.MathUtils.degToRad(theta))
-      camera.position.y = radius * Math.sin(THREE.MathUtils.degToRad(theta))
-      camera.position.z = radius * Math.cos(THREE.MathUtils.degToRad(theta))
-      camera.lookAt(scene.position)
-
-      camera.updateMatrixWorld()
 
       // find intersections
 
@@ -225,6 +215,24 @@
     function parseBigInt(value) {
       return Number(value.slice(0, -1))
     }
+
+    // for seeded number generation
+    // see https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
+    function seededRandom(seed = 1337 ^ 0xDEADBEEF) {
+      return sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, seed)
+    }
+    function sfc32(a, b, c, d) {
+    return function() {
+      a |= 0; b |= 0; c |= 0; d |= 0; 
+      var t = (a + b | 0) + d | 0;
+      d = d + 1 | 0;
+      a = b ^ b >>> 9;
+      b = c + (c << 3) | 0;
+      c = (c << 21 | c >>> 11);
+      c = c + t | 0;
+      return (t >>> 0) / 4294967296;
+    }
+}
 
   </script>
 
