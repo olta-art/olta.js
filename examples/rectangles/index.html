@@ -14,7 +14,6 @@
 </head>
 
 <body>
-
   <script src="../../lib/p5.min.js"></script>
   <script src="../../lib/olta.js"></script>
   <script>
@@ -147,6 +146,10 @@
     function parseBigInt(value) {
       return Number(value.slice(0, -1))
     }
+
+    // fix a bug with touch events in iframes on iOS
+    // https://stackoverflow.com/questions/41869122/touch-events-within-iframe-are-not-working-on-ios/50483933#50483933
+    document.addEventListener('touchstart', {})
   </script>
 </body>
 
