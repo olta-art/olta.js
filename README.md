@@ -1,39 +1,11 @@
 # olta.js
 
-> **Warning** Super duper early version. Only works locally. Very likely there will be breaking changes in the near future.
+> **Warning** pre-alpha version. Functionality is limited and likely bugs are around.
 
 `olta.js` is a small javascript library that communicates with olta dashboard, making it easy to read and write to a decentralised database.
 
-## Prerequisites
 
-#### Node.js
-
-You'll need [Node.js](https://nodejs.org/en/download) installed.
-
-to check everything is installed correctly
-
-run this in a terminal
-```
-node -v
-```
-
-You should see version number.
-
-#### Arlocal
-
-We will use [arlocal](https://github.com/textury/arlocal) to run a local arweave blockchain (not as scary as it sounds)
-
-Open a terminal and run:
-```
-npx arlocal
-```
-
-This will install arlocal onto your machine and run an instance of it on the port number 1984. Next time you run it it simply spins up an instance.
-
-> **Note** `arlocal` produces logs the folder it is run from. If you run it in the same folder as your project please watch out for it triggering hot reloads when not desired.
-
----
-
+<!-- TODO: rework getting started -->
 ## Getting Started
 
 Make sure you have `arlocal` running on port 1984. See above.
@@ -185,3 +157,45 @@ This function doesn't do anything just yet.
 | Param    | Type                  |
 | -------- | --------------------- |
 | callback | <code>function</code> |
+
+
+---
+
+## To Run Locally
+
+It is possible to run a local version of arweave to test how interactions might happen. This can speed up development by not waiting for interactions over the network. It also means you can test in private.
+
+### Prerequisites
+
+#### Node.js
+
+You'll need [Node.js](https://nodejs.org/en/download) installed.
+
+to check everything is installed correctly
+
+run this in a terminal
+```
+node -v
+```
+
+You should see version number.
+
+#### Arlocal
+
+We will use [arlocal](https://github.com/textury/arlocal) to run a local arweave blockchain (not as scary as it sounds)
+
+Open a terminal and run:
+```
+npx arlocal
+```
+
+This will install arlocal onto your machine and run an instance of it on the port number 1984. Next time you run it it simply spins up an instance.
+
+> **Note** `arlocal` produces logs the folder it is run from. If you run it in the same folder as your project please watch out for it triggering hot reloads when not desired.
+
+### Dashboard
+
+Once you have arlocal running head back to the dashboard click on the wallet settings icon in the sidebar. Select wallet type: local, network: local. Refresh the page and it should detect arlocal and generate a fresh wallet.
+
+You can then experiment to your hearts content.
+---
