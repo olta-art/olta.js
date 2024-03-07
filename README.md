@@ -30,8 +30,21 @@ Restricted features
   - no error handling (if you trigger an update an it is canceled or fails there is no way of knowing -> bad ux)
   - only create and update, no read or delete
 
-# Getting started
-- connect wallet (othent) (defaults to testnet)
+## Getting started
+### 1. Connect Wallet
+To get started head to [Olta Collective](https://collective.olta.art/) and hit connect. An Othent popup should appear, you can sign in via email or using gmail.
+
+> [!NOTE]
+> <details>
+>  <summary>
+>  What is Othent?
+>  </summary>
+>  <a href="https://othent.io/">Othent</a> is a key management service that creates an arweave wallet address for you. Currently Othent pays for all transaction fees so everything is free.
+> </details>
+
+> [!NOTE]
+> For now the default network is testnet
+
 - create a contract (use the form)
   - collection/document model
   - how to construct a schema
