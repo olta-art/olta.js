@@ -2,6 +2,7 @@
 
 
 <!-- TODO: reporting bugs -->
+<!-- TODO: decide on what to call things, e.g database, project, smart contract -->
 
 
 ## What is Olta.js ?
@@ -45,11 +46,73 @@ To get started head to [Olta Collective](https://collective.olta.art/) and hit c
 > [!NOTE]
 > For now the default network is testnet
 
-- create a contract (use the form)
-  - collection/document model
-  - how to construct a schema
-  - permissions
-  - deploy
+### 2. Create a Project
+
+Creating a project will deploy a new smart contract to act as our place to store the state of the project.
+
+#### 2a. Details
+When creating a project we have to define a few details (this can all be changed later) At a minimum give it a title.
+
+#### 2b. Data
+Next we to decide what data we want to store on the contract. We use a strict `NoSQL` architecture. Where each collection has pre-defined schema of what each document should look like.
+
+> [!NOTE]
+> | NoSQL structure | Description |
+> | --- | --- |
+> | property | a value inside a document
+> | document | an object or JSON |
+> | collection | a group/folder/array of documents
+> ```js
+>    // think of the structure like this
+>    const collection = [
+>      // document
+>      {
+>        // property
+>        key: value
+>      }
+>    ]
+> ```
+
+##### Document Properties
+
+With that in mind lets create a collection.
+Give your collection a name, it often makes sense to make it a plural e.g `colours`, `animals` or `values`. And define a schema for each document inside that collection. You can add multiple properties, for now the value type is limited to BigInt which is javascript version of Integer. You can set a min and a max value by expanding the property.
+
+I'm gonna stick with the default and set the collection name to `colors` and have one property called `value` with a min of `0` and a max of `255`
+
+> [!IMPORTANT]
+> make sure to give the properties unique names
+
+---
+
+##### Permissions
+
+The permissions section sets who is allowed to do what in your collection. You have options for creating and updating documents
+
+| create permission | Description |
+| --- | --- |
+| anyone | any user can create a document in the collection
+| only admin | only you the artist can create documents in this collection
+| no one | no user can create documents in this collection (useful for keeping it a fixed amount)
+
+| updating permission | Description |
+| --- | --- |
+| anyone | any user can update any document in the collection
+| only admin | only you the artist can update documents in this collection
+| no one | no user can update documents in this collection (useful for keeping the document the same as it was created)
+
+> [!NOTE]
+> `delete` permissions will be added in the future
+
+##### Initial State
+
+This allows you to quickly generate some documents in the database, `random` will give the documents any values between the min and max and `default` will give the properties the min value.
+
+#### 2c. Deploy
+
+Hit deploy and wait a little bit, once done this will redirect you to the project page.
+
+<!-- TODO -->
 - Developing
   - get something simple working locally
   - see examples
