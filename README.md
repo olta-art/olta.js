@@ -1,8 +1,54 @@
 # olta.js
 
-> **Warning** pre-alpha version. Functionality is limited and likely bugs are around.
 
-`olta.js` is a small javascript library that communicates with olta dashboard, making it easy to read and write to a decentralised database.
+<!-- TODO: reporting bugs -->
+
+
+## What is Olta.js ?
+A javascript api to trigger and listen to changes for artworks using the [olta collective](https://collective.olta.art/) smart contracts.
+
+It let's you build |artworks| with persistent state changes in a decentralized manner. Data is stored permanently, publicly and you get fast |confirmation|thanks to Warp smart contracts, and Arweave. We abstract away user authentication, tailor database schema, allow for easy showcasing and remove any recurring database fees. Allowing for you to concentrate on making the art.
+
+  <!-- ROUGH -->
+  [from an artist perspective]
+  Check Out [Olta Collective](https://collective.olta.art/) for an overview of the features.
+  Olta Collective handles user authentication using Othent kms service (recommended) or via Metamask. The database is a smart contract and is easy to configure and designed to be open to read and use.
+  <!-- ROUGH -->
+
+<!-- Maybe on the collective page -->
+Features  -> embedding, monetisation, collection document model
+
+<!-- TODO: find a good spot for this -->
+<!-- TODO: suggest staying on testnet ? -->
+## pre-alpha Version
+> **Warning** Functionality is limited and likely bugs are around.
+This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
+Restricted features
+  - only integers are stored (no strings, arrays, nested objects, floating points)
+  - only 1 collection can be made right now. (more on collections)
+  - no conditions (if only update if value x is more than y)
+  - no error handling (if you trigger an update an it is canceled or fails there is no way of knowing -> bad ux)
+  - only create and update, no read or delete
+
+# Getting started
+- connect wallet (othent) (defaults to testnet)
+- create a contract (use the form)
+  - collection/document model
+  - how to construct a schema
+  - permissions
+  - deploy
+- Developing
+  - get something simple working locally
+  - see examples
+    - viewer -> (embed, testing, overriding url)
+    - manage -> (create, update)
+    - history -> (history of interactions, also sonar)
+    - settings
+      - Content url
+      - isOpen
+      - Fee
+  - publishing (vercel, or arweave)
+
 
 
 <!-- TODO: rework getting started -->
@@ -11,14 +57,14 @@
 Make sure you have `arlocal` running on port 1984. See above.
 
 ### To view an example:
-1. head to olta [dashboard](https://olta-v2-alpha.vercel.app/)
+1. head to the [dashboard](https://collective.olta.art/)
 2. click on one of the examples
 3. use the `manage` tab to edit the state
 4. use the `viewer` tab to see changes in the artwork (tip: duplicate to another window to see changes live)
 
 ### To edit an example:
 1. Download/clone this repo.
-2. head to olta [dashboard](https://olta-v2-alpha.vercel.app/)
+2. head to olta [dashboard](https://collective.olta.art/)
 3. create a new project (tip: copy example configs exactly)
 4. click on newly created project
 5. in vscode/code editor navigate to example and spin up localserver for the index.html file of the example. In vscode there is a `golive` button in the bottom right corner.
