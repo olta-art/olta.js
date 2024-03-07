@@ -112,9 +112,54 @@ This allows you to quickly generate some documents in the database, `random` wil
 
 Hit deploy and wait a little bit, once done this will redirect you to the project page.
 
+
+### Developing
+
+Lets get setup so you can develop using `olta.js` locally.
+To get olta js:
+
+#### install
+
+npm
+```
+npm i @olta/js-sdk
+```
+yarn
+```
+yarn add @olta/js-sdk
+```
+<!-- TODO: test this actually works -->
+```js
+import { Olta } from '@olta/js-sdk'
+```
+
+##### or with a script tag
+create a copy of [olta.js](https://raw.githubusercontent.com/olta-art/olta.js/main/lib/olta.js) file and add a script tag to your html
+```html
+<script src="./olta.js"></script>
+```
+
+#### get it setup with your current project
+To get the project displaying in the dashboard head to the `viewer tab` of your project. Click on `Override Content Url?` option and input a url of your locally running project.
+
+#### read the state
+lets create some text displaying all the documents in the collection
+```js
+
+
+```
+
+
+#### create document
+
+#### update a document
+
 <!-- TODO -->
 - Developing
   - get something simple working locally
+    - read
+    - create
+    - update
   - see examples
     - viewer -> (embed, testing, overriding url)
     - manage -> (create, update)
@@ -124,8 +169,6 @@ Hit deploy and wait a little bit, once done this will redirect you to the projec
       - isOpen
       - Fee
   - publishing (vercel, or arweave)
-
-
 
 <!-- TODO: rework getting started -->
 ## Getting Started
