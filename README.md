@@ -268,6 +268,48 @@ olta.onUpdate(() => {
 
 #### create document
 
+To create a new document in a collection we decide what event will trigger that creation and make sure to format the data correctly.
+
+>[!TIP]
+> Make sure to listen for updates using the `onUpdate` function so any new documents are rendered. (see read section)
+
+When creating a document the id is generated automatically on the contract. So you just need to provide it with an object with the correct type and formated correctly.
+
+For example here we create a new random color on click/touch
+
+```js
+// initialize
+const olta = Olta()
+
+// function to create a new colors document
+function createNewRandomColor () {
+  return {
+    value: math.random() * 4
+  }
+}
+
+// create on click
+document.addEventListener("click", formatDoc(createNewRandomColor))
+
+// create on touch
+document.addEventListener("touchstart", formatDoc(createNewRandomColor))
+
+// helper to format the document ready for the contract
+function formatDoc (doc){
+  const formattedDoc = {}
+  for (const [key, value] of Object.entries(doc)) {
+    // format property
+    formattedDoc[key] = formatBigInt(value)
+  }
+  return formattedDoc
+}
+
+// helper to format the value for bigInt
+function formatBigInt(value) {
+  return (Math.floor(value) + "n")
+}
+```
+
 #### update a document
 
 <!-- TODO -->
