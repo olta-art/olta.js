@@ -139,16 +139,132 @@ create a copy of [olta.js](https://raw.githubusercontent.com/olta-art/olta.js/ma
 <script src="./olta.js"></script>
 ```
 
-#### get it setup with your current project
-To get the project displaying in the dashboard head to the `viewer tab` of your project. Click on `Override Content Url?` option and input a url of your locally running project.
+#### Get it setup with your current project
+To get the project displaying in the dashboard head to the `viewer` of your project. Click on `Override Content Url?` option and input a url of your locally running project. For example `http://localhost:5000`.
+
 
 #### read the state
 lets create some text displaying all the documents in the collection
 ```js
+// initialize
+const olta = Olta()
 
+// listen for updates
+olta.onUpdate(() => {
+  // change "colors" to whatever you named your collection
+  const colors = olta.getAll("colors")
 
+  // lets simply just log out colors
+  console.log("documents", colors)
+})
 ```
 
+Looking at your project from the `viewer` in the dashboard you should see an array of all the documents printed to the console.
+
+> [!NOTE]
+Make sure you have some "documents" in your smart contract. Head to the `manage` tab to see the current state of you smart contract. You can also `create` and `update` documents from there given you have the relevant permissions
+
+##### parsing data
+
+You'll notice the data might not be what you want.
+On the contract we add an `n` to BigInt types. We need to parse that data so we can use it.
+```js
+/* given the document
+const color = { value: '1n' }
+*/
+
+const parsedColor = parseDoc(color) // result : {value: 1}
+
+// Helper function to parse all the values of a document to a number
+function parseDoc (doc) {
+  const parsedDoc = {}
+  for (const [key, value] of Object.entries(doc)) {
+    // ignore hidden properties
+    if(key.startsWith("_")){
+      parsedDoc[key] = value
+      continue
+    }
+
+    // parse property
+    parsedDoc[key] = parseBigIntToNumber(value)
+  }
+  return parsedDoc
+}
+
+// parsing a bigInt value to number e.g '1n' -> 1
+function parseBigIntToNumber(value) {
+  return Number(value.slice(0, -1))
+}
+```
+
+we can use those functions in our `onUpdate` listener to parse the returned data.
+```js
+const olta = Olta()
+
+olta.onUpdate(() => {
+  // we map over the result of getAll parsing each document.
+  const colors = olta.getAll("colors")?.map(c => parseDoc(c))
+
+  console.log(colors)
+})
+
+// Helper function to parse all the values of a document to a number
+function parseDoc (doc) {
+  const parsedDoc = {}
+  for (const [key, value] of Object.entries(doc)) {
+    // ignore hidden properties
+    if(key.startsWith("_")){
+      parsedDoc[key] = value
+      continue
+    }
+
+    // parse property
+    parsedDoc[key] = parseBigIntToNumber(value)
+  }
+  return parsedDoc
+}
+
+// parsing a bigInt value to number e.g '1n' -> 1
+function parseBigIntToNumber(value) {
+  return Number(value.slice(0, -1))
+}
+```
+
+##### Using a render function
+
+Lets create a render function to run on every update for this example we'll render the colors as a button in html
+
+```js
+// with `value` having a min of 0 and max of 3 we can have 4 colors
+const colorScheme = [
+  "red",
+  "green",
+  "blue",
+  "black"
+]
+
+function render(docs){
+  // simply do nothing if docs is undefined
+  if(!docs){
+    return
+  }
+
+  // create the html of buttons with each button background showing the color and the id
+  const buttons = docs.map(doc => `
+    <button style="background=${colorScheme[doc.value]}>${doc._id}</button>
+  `).join("")
+
+  // display the buttons
+  document.body.innerHtml = buttons
+}
+
+olta.onUpdate(() => {
+  const colors = olta.getAll("colors")?.map(c => parseDoc(c))
+
+  // use the render function
+  render(colors)
+})
+```
 
 #### create document
 
