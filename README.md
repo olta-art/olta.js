@@ -48,7 +48,7 @@ To get started head to [Olta Collective](https://collective.olta.art/) and hit c
 
 ### 2. Create a Project
 
-Creating a project will deploy a new smart contract to act as our place to store the state of the project.
+Creating a project will deploy a new smart contract to act as our place to store the state of the project. Head to the [create form](https://collective.olta.art/create/)
 
 #### 2a. Details
 When creating a project we have to define a few details (this can all be changed later) At a minimum give it a title.
@@ -73,7 +73,7 @@ Next we to decide what data we want to store on the contract. We use a strict `N
 >    ]
 > ```
 
-##### Document Properties
+#### 2c. Document Properties
 
 With that in mind lets create a collection.
 Give your collection a name, it often makes sense to make it a plural e.g `colours`, `animals` or `values`. And define a schema for each document inside that collection. You can add multiple properties, for now the value type is limited to BigInt which is javascript version of Integer. You can set a min and a max value by expanding the property.
@@ -85,7 +85,7 @@ I'm gonna stick with the default and set the collection name to `colors` and hav
 
 ---
 
-##### Permissions
+#### 2d. Permissions
 
 The permissions section sets who is allowed to do what in your collection. You have options for creating and updating documents
 
@@ -104,11 +104,11 @@ The permissions section sets who is allowed to do what in your collection. You h
 > [!NOTE]
 > `delete` permissions will be added in the future
 
-##### Initial State
+#### 2e. Initial State
 
 This allows you to quickly generate some documents in the database, `random` will give the documents any values between the min and max and `default` will give the properties the min value.
 
-#### 2c. Deploy
+#### 2f. Deploy
 
 Hit deploy and wait a little bit, once done this will redirect you to the project page.
 
@@ -266,7 +266,7 @@ olta.onUpdate(() => {
 })
 ```
 
-#### create document
+#### Create A Document
 
 To create a new document in a collection we decide what event will trigger that creation and make sure to format the data correctly.
 
@@ -310,43 +310,68 @@ function formatBigInt(value) {
 }
 ```
 
-#### update a document
+#### Update A Document
 
+To update a document it is similar to create but we must specify an id.
+For example:
+```js
+olta.update(collectionName, {
+  // id must be supplied
+  id: docId,
+  // all other properties go here e.g
+  value: '1n'
+})
+```
+The difficult part is how do you know the docId? Id's are automatically generated and so the best way to find them is by using the `getAll` function. Every document will have have a `._id` property that can be used.
+
+In the example below we get the doc id by randomly selecting a colors document.
+
+```js
+// store the colors collection
+let colors = []
+
+olta.onUpdate(() => {
+  // set colors on every update
+  colors = olta.getAll("colors")
+
+  // render stuff goes here
+})
+
+// on click we update a random color to a random color
+document.addEventListener("click", () => {
+  // do nothing if no colors
+  if(colors.length < 1){
+    return
+  }
+
+  // get a random index from the colors array
+  randomIndex = math.floor(math.random() * colors.length)
+
+  // the chosen doc
+  const doc = colors[randomIndex]
+
+  // create a new updated color doc
+  const updatedDoc = {
+    // use the id from our chosen doc
+    id: doc._id
+    // set it to a random color
+    value: formatBigInt(math.random() * 4)
+  }
+
+  // finally we update that doc
+  olta.update("colors", updatedDoc)
+})
+
+// helper to format the value for bigInt
+function formatBigInt(value) {
+  return (Math.floor(value) + "n")
+}
+
+```
 <!-- TODO -->
-- Developing
-  - get something simple working locally
-    - read
-    - create
-    - update
-  - see examples
-    - viewer -> (embed, testing, overriding url)
-    - manage -> (create, update)
-    - history -> (history of interactions, also sonar)
-    - settings
-      - Content url
-      - isOpen
-      - Fee
   - publishing (vercel, or arweave)
 
 <!-- TODO: rework getting started -->
-## Getting Started
-
-Make sure you have `arlocal` running on port 1984. See above.
-
-### To view an example:
-1. head to the [dashboard](https://collective.olta.art/)
-2. click on one of the examples
-3. use the `manage` tab to edit the state
-4. use the `viewer` tab to see changes in the artwork (tip: duplicate to another window to see changes live)
-
-### To edit an example:
-1. Download/clone this repo.
-2. head to olta [dashboard](https://collective.olta.art/)
-3. create a new project (tip: copy example configs exactly)
-4. click on newly created project
-5. in vscode/code editor navigate to example and spin up localserver for the index.html file of the example. In vscode there is a `golive` button in the bottom right corner.
-6. put the url eg `localhost:5500/examples/box-dom/index.html` in to the url input on the project page.
-
 ---
 
 ## Examples
@@ -431,7 +456,7 @@ olta.create("colors", doc)
 ### Olta~update(collectionId, doc)
 Updates a document in a given collection
 
-**Kind**: inner method of [<code>Olta</code>](#Olta)  
+**Kind**: inner method of [<code>Olta</code>](#Olta) 
 
 | Param        | Type                |
 | ------------ | ------------------- |
