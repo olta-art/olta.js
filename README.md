@@ -50,7 +50,8 @@ It let's you build artworks with persistent state changes in a decentralized man
 <!-- TODO: find a good spot for this -->
 <!-- TODO: suggest staying on testnet ? -->
 ## <a name='pre-alphaVersion'></a>pre-alpha Version
-> [!WARNING] Functionality is limited and there are likely bugs around.
+> [!WARNING] 
+> Functionality is limited and there are likely bugs around.
 > This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
 >
 > *Restricted features include:*
