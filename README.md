@@ -1,41 +1,72 @@
 # olta.js
 
+## <a name='WhatisOlta.js'></a>What is Olta.js ?
+A javascript api to trigger and listen to changes for artworks using the [olta collective](https://collective.olta.art/) smart contracts.
+
+It let's you build artworks with persistent state changes in a decentralized manner. Data is stored permanently, publicly and you get fast a response time thanks to Warp Smart Contracts, and Arweave. We abstract away user authentication, tailor database schema, allow for easy showcasing and remove any recurring database fees. Allowing for you to concentrate on making collective art.
+
+## Contents
+<!-- vscode-markdown-toc -->
+- [olta.js](#oltajs)
+  - [What is Olta.js ?](#what-is-oltajs-)
+  - [Contents](#contents)
+  - [pre-alpha Version](#pre-alpha-version)
+  - [API Docs](#api-docs)
+  - [Getting started](#getting-started)
+    - [1. Connect Wallet](#1-connect-wallet)
+    - [2. Create a Project](#2-create-a-project)
+      - [2a. Details](#2a-details)
+      - [2b. Data](#2b-data)
+      - [2c. Collection](#2c-collection)
+      - [2d. Permissions](#2d-permissions)
+      - [2e. Initial State](#2e-initial-state)
+      - [2f. Deploy](#2f-deploy)
+    - [3. Developing](#3-developing)
+      - [install](#install)
+      - [Setup](#setup)
+      - [read the state](#read-the-state)
+      - [Create A Document](#create-a-document)
+      - [Update A Document](#update-a-document)
+  - [Examples](#examples)
+    - [tiles](#tiles)
+    - [rectangles](#rectangles)
+    - [cuboids](#cuboids)
+  - [To Run Locally](#to-run-locally)
+    - [Prerequisites](#prerequisites)
+      - [Node.js](#nodejs)
+      - [Arlocal](#arlocal)
+    - [Dashboard](#dashboard)
+
+<!-- vscode-markdown-toc-config
+	numbering=false
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
 
 <!-- TODO: reporting bugs -->
 <!-- TODO: decide on what to call things, e.g database, project, smart contract -->
 
-## What is Olta.js ?
-A javascript api to trigger and listen to changes for artworks using the [olta collective](https://collective.olta.art/) smart contracts.
-
-It let's you build |artworks| with persistent state changes in a decentralized manner. Data is stored permanently, publicly and you get fast |confirmation|thanks to Warp smart contracts, and Arweave. We abstract away user authentication, tailor database schema, allow for easy showcasing and remove any recurring database fees. Allowing for you to concentrate on making the art.
-
-  <!-- ROUGH -->
-  [from an artist perspective]
-  Check Out [Olta Collective](https://collective.olta.art/) for an overview of the features.
-  Olta Collective handles user authentication using Othent kms service (recommended) or via Metamask. The database is a smart contract and is easy to configure and designed to be open to read and use.
-  <!-- ROUGH -->
-
-<!-- Maybe on the collective page -->
-Features  -> embedding, monetisation, collection document model
-
 <!-- TODO: find a good spot for this -->
 <!-- TODO: suggest staying on testnet ? -->
-## pre-alpha Version
-> **Warning** Functionality is limited and likely bugs are around.
-This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
-Restricted features
-  - only integers are stored (no strings, arrays, nested objects, floating points)
-  - only 1 collection can be made right now. (more on collections)
-  - no conditions (if only update if value x is more than y)
-  - no error handling (if you trigger an update an it is canceled or fails there is no way of knowing -> bad ux)
-  - only create and update, no read or delete
+## <a name='pre-alphaVersion'></a>pre-alpha Version
+> [!WARNING] Functionality is limited and there are likely bugs around.
+> This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
+>
+> *Restricted features include:*
+>  - only integers are stored (no strings, arrays, nested objects, floating points)
+>  - only 1 collection can be made right now.
+>  - no conditional updating (e.g only update when value x is more than y)
+>  - no error handling (if you trigger an update an it is canceled or fails there is no way of knowing -> bad ux)
+>  - no `read` or `delete` actions, only `create` and `update` are available
+> 
 
 
-## API Docs
+## <a name='APIDocs'></a>API Docs
 API documentation can be found [here in API.md](./API.md)
 
-## Getting started
-### 1. Connect Wallet
+## <a name='Gettingstarted'></a>Getting started
+### <a name='ConnectWallet'></a>1. Connect Wallet
 To get started head to [Olta Collective](https://collective.olta.art/) and hit connect. An Othent popup should appear, you can sign in via email or using gmail.
 
 > [!NOTE]
@@ -49,14 +80,14 @@ To get started head to [Olta Collective](https://collective.olta.art/) and hit c
 > [!NOTE]
 > For now the default network is testnet
 
-### 2. Create a Project
+### <a name='CreateaProject'></a>2. Create a Project
 
 Creating a project will deploy a new smart contract to act as our place to store the state of the project. Head to the [create form](https://collective.olta.art/create/)
 
-#### 2a. Details
+#### <a name='a.Details'></a>2a. Details
 When creating a project we have to define a few details (this can all be changed later) At a minimum give it a title.
 
-#### 2b. Data
+#### <a name='b.Data'></a>2b. Data
 To set up persistent state changes in an artwork, there is a predefined structure you need to use. First you need to understand the concept of collections, documents, and properties, commonly found in document-oriented databases (often referred to as NoSQL).
 
 ```mermaid
@@ -122,7 +153,7 @@ A field or a key value pair within a document. In our example there is `x` `y` `
 
 Having this strict structure lets us create rules for how collections, documents and properties can be changed. For example only letter the user you created the circle update it later.
 
-#### 2c. Collection
+#### <a name='c.Collection'></a>2c. Collection
 
 Give your collection a name, it often makes sense to make it a plural e.g `colours`, `animals` or `values`. And define a schema for each document inside that collection. You can add multiple properties, for now the value type is limited to BigInt which is javascript version of Integer. You can set a min and a max value by expanding the property.
 
@@ -133,7 +164,7 @@ I'm gonna stick with the default and set the collection name to `colors` and hav
 
 ---
 
-#### 2d. Permissions
+#### <a name='d.Permissions'></a>2d. Permissions
 
 The permissions section sets who is allowed to do what in your collection. You have options for creating and updating documents
 
@@ -152,7 +183,7 @@ The permissions section sets who is allowed to do what in your collection. You h
 > [!NOTE]
 > `delete` permissions will be added in the future
 
-#### 2e. Initial State
+#### <a name='e.InitialState'></a>2e. Initial State
 
 The initial state is what the database will look like before any users have changed it.
 
@@ -160,17 +191,17 @@ You can generate some `random` documents. This will give the documents any value
 
 If you would like to have no initial state to begin with _i.e no documents in your collection, it will all be user generated_ then set the generate number to `0`.
 
-#### 2f. Deploy
+#### <a name='f.Deploy'></a>2f. Deploy
 
 Hit deploy and wait a little bit, once done this will redirect you to the project page.
 
 
-### Developing
+### <a name='Developing'></a>3. Developing
 
 Lets get setup so you can develop using `olta.js` locally.
 To get olta js:
 
-#### install
+#### <a name='install'></a>install
 
 npm
 ```
@@ -191,11 +222,11 @@ create a copy of [olta.js](https://raw.githubusercontent.com/olta-art/olta.js/ma
 <script src="./olta.js"></script>
 ```
 
-#### Get it setup with your current project
+#### <a name='setup'></a>Setup
 To get the project displaying in the dashboard head to the `viewer` of your project. Click on `Override Content Url?` option and input a url of your locally running project. For example `http://localhost:5000`.
 
 
-#### read the state
+#### <a name='readthestate'></a>read the state
 lets create some text displaying all the documents in the collection.
 ```js
 // initialize
@@ -320,7 +351,7 @@ olta.onUpdate(() => {
 })
 ```
 
-#### Create A Document
+#### <a name='CreateADocument'></a>Create A Document
 
 To create a new document in a collection we decide what event will trigger that creation and make sure to format the data correctly.
 
@@ -364,7 +395,7 @@ function formatBigInt(value) {
 }
 ```
 
-#### Update A Document
+#### <a name='UpdateADocument'></a>Update A Document
 
 To update a document it is similar to create but we must specify an id.
 For example:
@@ -430,34 +461,34 @@ function formatBigInt(value) {
 <!-- TODO: rework getting started -->
 ---
 
-## Examples
+## <a name='Examples'></a>Examples
 
-### tiles
+### <a name='tiles'></a>tiles
 This example uses no framework and renders out things using the DOM. It will work with any project. It represents each document as a box and each property as a color in the box. This way you can easily visualise the data on the project.
 
 You can hover over properties to view the data.
 
 [code](./examples/tiles/index.html)
 
-### rectangles
+### <a name='rectangles'></a>rectangles
 This example uses `p5.js` and renders out gray rectangles. You can click to `create` a new rectangle.
 
 [code](./examples/rectangles/index.html)
 
-### cuboids
+### <a name='cuboids'></a>cuboids
 This example uses `three.js` and renders out 100 cuboids with specific colors. You can `update` the color by clicking
 
 [code](./examples/cuboids/index.html)
 
 ---
 
-## To Run Locally
+## <a name='ToRunLocally'></a>To Run Locally
 
 It is possible to run a local version of arweave to test how interactions might happen. This can speed up development by not waiting for interactions over the network. It also means you can test in private.
 
-### Prerequisites
+### <a name='Prerequisites'></a>Prerequisites
 
-#### Node.js
+#### <a name='Node.js'></a>Node.js
 
 You'll need [Node.js](https://nodejs.org/en/download) installed.
 
@@ -470,7 +501,7 @@ node -v
 
 You should see version number.
 
-#### Arlocal
+#### <a name='Arlocal'></a>Arlocal
 
 We will use [arlocal](https://github.com/textury/arlocal) to run a local arweave blockchain (not as scary as it sounds)
 
@@ -483,9 +514,8 @@ This will install arlocal onto your machine and run an instance of it on the por
 
 > **Note** `arlocal` produces logs the folder it is run from. If you run it in the same folder as your project please watch out for it triggering hot reloads when not desired.
 
-### Dashboard
+### <a name='Dashboard'></a>Dashboard
 
 Once you have arlocal running head back to the dashboard click on the wallet settings icon in the sidebar. Select wallet type: local, network: local. Refresh the page and it should detect arlocal and generate a fresh wallet.
 
 You can then experiment to your hearts content.
----
