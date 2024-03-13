@@ -10,7 +10,7 @@ It let's you build artworks with persistent state changes in a decentralized man
 - [olta.js](#oltajs)
   - [What is Olta.js ?](#what-is-oltajs-)
   - [Contents](#contents)
-  - [pre-alpha Version](#pre-alpha-version)
+  - [alpha Version](#alpha-version)
   - [API Docs](#api-docs)
   - [Getting started](#getting-started)
     - [1. Connect Wallet](#1-connect-wallet)
@@ -49,8 +49,8 @@ It let's you build artworks with persistent state changes in a decentralized man
 
 <!-- TODO: find a good spot for this -->
 <!-- TODO: suggest staying on testnet ? -->
-## <a name='pre-alphaVersion'></a>pre-alpha Version
-> [!WARNING] 
+## <a name='alphaVersion'></a>alpha Version
+> [!IMPORTANT] 
 > Functionality is limited and there are likely bugs around.
 > This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
 >
