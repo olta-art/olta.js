@@ -136,13 +136,13 @@ The permissions section sets who is allowed to do what in your collection. You h
 
 | create permission | Description |
 | --- | --- |
-| anyone | any user can create a document in the collection
+| anyone | any user can create a new document in the collection
 | only admin | only you the artist can create documents in this collection
 | no one | no user can create documents in this collection (useful for keeping it a fixed amount)
 
 | updating permission | Description |
 | --- | --- |
-| anyone | any user can update any document in the collection
+| anyone | any user can update an existing document in the collection
 | only admin | only you the artist can update documents in this collection
 | no one | no user can update documents in this collection (useful for keeping the document the same as it was created)
 
@@ -151,7 +151,11 @@ The permissions section sets who is allowed to do what in your collection. You h
 
 #### 2e. Initial State
 
-This allows you to quickly generate some documents in the database, `random` will give the documents any values between the min and max and `default` will give the properties the min value.
+The initial state is what the database will look like before any users have changed it.
+
+You can generate some `random` documents. This will give the documents any values between the min and max. Or choosing `default` will give the properties the min value.
+
+If you would like to have no initial state to begin with _i.e no documents in your collection, it will all be user generated_ then set the generate number to `0`.
 
 #### 2f. Deploy
 
