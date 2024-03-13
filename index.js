@@ -1,4 +1,4 @@
-import { Olta } from "lib/olta.module.js"
+import { Olta } from "./lib/olta.module.js"
 
 export {
   Olta
