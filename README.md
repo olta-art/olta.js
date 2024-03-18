@@ -147,7 +147,7 @@ A field or a key value pair within a document. In our example there is `x` `y` `
 > |`_id`| Useful for updating specific documents, see [update a document](#update-a-document)|
 > | `_creator` | Is the wallet address of who created the document, useful for filtering based on user. |
 > | `_sortKey` | Can be used to order documents
-</details>
+> </details>
 
 > [!TIP]
 > In javascript think of collection as an array of objects
