@@ -152,7 +152,7 @@ A field or a key value pair within a document. In our example there is `x` `y` `
 >  ]
 > ```
 
-Having this strict structure lets us create rules for how collections, documents and properties can be changed. For example only letter the user you created the circle update it later.
+Having this strict structure lets us create rules for how collections, documents and properties can be changed. For example: only letting the user who created the circle update it later, or making it so no one can add new circles only move them around.
 
 #### <a name='c.Collection'></a>2c. Collection
 
