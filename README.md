@@ -50,7 +50,7 @@ It let's you build artworks with persistent state changes in a decentralized man
 <!-- TODO: find a good spot for this -->
 <!-- TODO: suggest staying on testnet ? -->
 ## <a name='alphaVersion'></a>alpha Version
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > Functionality is limited and there are likely bugs around.
 > This is very much still in development and we have intentionally kept the feature set to a minimum for now while we find the best approach.
 >
@@ -60,7 +60,7 @@ It let's you build artworks with persistent state changes in a decentralized man
 >  - no conditional updating (e.g only update when value x is more than y)
 >  - no error handling (if you trigger an update an it is canceled or fails there is no way of knowing -> bad ux)
 >  - no `read` or `delete` actions, only `create` and `update` are available
-> 
+>
 
 
 ## <a name='APIDocs'></a>API Docs
@@ -248,73 +248,7 @@ We use the [onUpdate](./API.md#oltaonupdatecallback) function to listen for upda
 Looking at your project from the `viewer` in the dashboard you should see an array of all the documents printed to the browser console.
 
 > [!NOTE]
-Make sure you have some "documents" in your smart contract. Head to the `manage` tab to see the current state of you smart contract. You can also `create` and `update` documents from there given you have the relevant permissions
-
-##### parsing data
-
-You'll notice the data might not be what you want.
-On the contract we add an `n` to BigInt types. We need to parse that data so we can use it.
-```js
-/* given the document
-const color = { value: '1n' }
-*/
-
-const parsedColor = parseDoc(color) // result : {value: 1}
-
-// Helper function to parse all the values of a document to a number
-function parseDoc (doc) {
-  const parsedDoc = {}
-  for (const [key, value] of Object.entries(doc)) {
-    // ignore hidden properties
-    if(key.startsWith("_")){
-      parsedDoc[key] = value
-      continue
-    }
-
-    // parse property
-    parsedDoc[key] = parseBigIntToNumber(value)
-  }
-  return parsedDoc
-}
-
-// parsing a bigInt value to number e.g '1n' -> 1
-function parseBigIntToNumber(value) {
-  return Number(value.slice(0, -1))
-}
-```
-
-we can use those functions in our `onUpdate` listener to parse the returned data.
-```js
-const olta = Olta()
-
-olta.onUpdate(() => {
-  // we map over the result of getAll parsing each document.
-  const colors = olta.getAll("colors")?.map(c => parseDoc(c))
-
-  console.log(colors)
-})
-
-// Helper function to parse all the values of a document to a number
-function parseDoc (doc) {
-  const parsedDoc = {}
-  for (const [key, value] of Object.entries(doc)) {
-    // ignore hidden properties
-    if(key.startsWith("_")){
-      parsedDoc[key] = value
-      continue
-    }
-
-    // parse property
-    parsedDoc[key] = parseBigIntToNumber(value)
-  }
-  return parsedDoc
-}
-
-// parsing a bigInt value to number e.g '1n' -> 1
-function parseBigIntToNumber(value) {
-  return Number(value.slice(0, -1))
-}
-```
+> Make sure you have some "documents" in your smart contract. Head to the `manage` tab to see the current state of you smart contract. You can also `create` and `update` documents from there given you have the relevant permissions
 
 ##### Using a render function
 
@@ -345,56 +279,34 @@ function render(docs){
 }
 
 olta.onUpdate(() => {
-  const colors = olta.getAll("colors")?.map(c => parseDoc(c))
+  const colors = olta.getAll("colors")
 
   // use the render function
   render(colors)
 })
 ```
 
+See the [examples](#examples) section for more in depth library specific examples.
+
 #### <a name='CreateADocument'></a>Create A Document
 
-To create a new document in a collection we decide what event will trigger that creation and make sure to format the data correctly.
+To create a new document in a collection we can use the `create` function. The id is generated automatically on the contract. So you just need to provide it with an object with the correct properties.
 
->[!TIP]
-> Make sure to listen for updates using the [onUpdate](./API.md#oltaonupdatecallback) function so any new documents are rendered.
-
-When creating a document the id is generated automatically on the contract. So you just need to provide it with an object with the correct type and formated correctly.
-
-For example here we create a new random color on click/touch
-
+For example here we create a new random color on click
 ```js
-// initialize
-const olta = Olta()
-
 // function to create a new colors document
-function createNewRandomColor () {
+function randomColorDoc () {
   return {
     value: math.random() * 4
   }
 }
 
 // create on click
-document.addEventListener("click", formatDoc(createNewRandomColor))
-
-// create on touch
-document.addEventListener("touchstart", formatDoc(createNewRandomColor))
-
-// helper to format the document ready for the contract
-function formatDoc (doc){
-  const formattedDoc = {}
-  for (const [key, value] of Object.entries(doc)) {
-    // format property
-    formattedDoc[key] = formatBigInt(value)
-  }
-  return formattedDoc
-}
-
-// helper to format the value for bigInt
-function formatBigInt(value) {
-  return (Math.floor(value) + "n")
-}
+document.addEventListener("click",  olta.create("colors", randomColorDoc))
 ```
+
+>[!TIP]
+> Make sure to listen for updates using the [onUpdate](./API.md#oltaonupdatecallback) function so any new documents are rendered.
 
 #### <a name='UpdateADocument'></a>Update A Document
 
@@ -405,11 +317,10 @@ olta.update(collectionName, {
   // id must be supplied
   id: docId,
   // all other properties go here e.g
-  value: '1n'
+  value: 1
 })
 ```
 
-We simply use the [update](./API.md#oltaupdatecollectionid-doc) function.
 The difficult part is how do you know the docId? Id's are automatically generated on the smart contract and so the best way to find them is by using the `getAll` function. Every document will have have a `._id` property that can be used.
 
 In the example below we get the doc id by randomly selecting a colors document.
@@ -443,17 +354,12 @@ document.addEventListener("click", () => {
     // use the id from our chosen doc
     id: doc._id
     // set it to a random color
-    value: formatBigInt(math.random() * 4)
+    value: math.random() * 4
   }
 
   // finally we update that doc
   olta.update("colors", updatedDoc)
 })
-
-// helper to format the value for bigInt
-function formatBigInt(value) {
-  return (Math.floor(value) + "n")
-}
 
 ```
 <!-- TODO -->
