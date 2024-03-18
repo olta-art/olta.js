@@ -95,13 +95,13 @@
             const value = doc[key]
 
             // convert bigInt to a hex decimal color
-            const v = mapRange(parseBigInt(value), Number(min), Number(max), 0, 16777215)
+            const v = mapRange(value, Number(min), Number(max), 0, 16777215)
             const color = (Math.floor(v).toString(16)).padStart(6, 0)
 
             template += `<span
               class="property ${key}"
               style="background-color: #${color};"
-              data-value="${parseBigInt(value)}"
+              data-value="${value}"
               data-key="${key}"
               data-doc="${documentId}"
               >
@@ -121,11 +121,6 @@
         const dataset = e.target.dataset
         infoEl.innerText = `[${dataset.doc}]\n${dataset.key}: ${dataset.value}`
       })
-    }
-
-    // eg "255n" -> 255
-    function parseBigInt(value) {
-      return Number(value.slice(0, -1))
     }
 
     // Map function to convert the range
