@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/olta-art/olta.js/issues"
   },
-  "homepage": "https://github.com/olta-art/olta.js#readme"
+  "homepage": "https://github.com/olta-art/olta.js#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
