@@ -58,11 +58,11 @@
 
     const loading = document.querySelector(".loading")
 
-    // initialize olta instance
-    const olta = Olta()
-
     // create a seeded random number generator with "cuboids" as the seed
     const rand = seededRandom("cuboids")
+
+    // initialize olta instance
+    const olta = Olta()
 
     // setup what to do on an update
     olta.onUpdate(() => {
@@ -78,7 +78,7 @@
         const cuboid = cuboids[i]
 
         // update color
-        cuboid.material.color.setHex(palette[parseBigInt(color.value)])
+        cuboid.material.color.setHex(palette[color.value])
 
         // store reference to color document
         cuboid.name = color._id
@@ -101,7 +101,7 @@
 
       // cycle over palette indexes
       const currentIndex = palette.indexOf(INTERSECTED.material.color.getHex())
-      const value = currentIndex < palette.length - 1 ? currentIndex + 1 + "n" : 0 + "n"
+      const value = currentIndex < palette.length - 1 ? currentIndex + 1 : 0
 
       // create color document to update
       const doc = { id, value }
@@ -209,11 +209,6 @@
 
       renderer.render(scene, camera)
 
-    }
-
-    // eg "255n" -> 255
-    function parseBigInt(value) {
-      return Number(value.slice(0, -1))
     }
 
     // for seeded number generation
