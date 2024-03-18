@@ -135,10 +135,11 @@ An individual record within a collection. Continuing with our circle artwork eac
 ##### Property
 A field or a key value pair within a document. In our example there is `x` `y` `color` properties for rendering a circle in a location and a given color.
 
-> [!TIP] Meta Properties
+> [!TIP]
+> ##### Meta Properties
 > <details>
 > <summary>
->   Each document also contains meta properties about its self.
+>   Each document also contains meta properties about itself.
 > </summary>
 > They are read only, prefaced with `_` and are automatically added by the smart contract.
 > 
