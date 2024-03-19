@@ -81,9 +81,11 @@
 
         // Loop over all documents in collection
         for (const documentId in collection) {
-          template += `<div class="document ${documentId}">`
-          const doc = collection[documentId]
 
+          // We are reading directly from olta.state, so need to manually parse each document
+          const doc = olta.parseDoc(collection[documentId])
+
+          template += `<div class="document ${documentId}">`
           // Loop over every property in document
           for (const key in doc) {
             if (key === "_id" || key === "_creator" || key === "_sortKey") {
