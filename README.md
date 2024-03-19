@@ -375,11 +375,9 @@ document.addEventListener("click", () => {
 })
 
 ```
-<!-- TODO -->
-  - publishing (vercel, or arweave)
-
-<!-- TODO: rework getting started -->
 ---
+
+<!-- TODO publishing (vercel, or arweave) -->
 
 ## <a name='Examples'></a>Examples
 
