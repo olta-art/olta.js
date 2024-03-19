@@ -31,10 +31,10 @@
       rectMode(CENTER)
 
       olta.onUpdate(() => {
-        const boxes = olta.getAll("boxes")
+        boxes = olta.getAll("boxes")
 
         // only update the boxes if there are new boxes
-        if(!latestBoxes || latestBoxes.length < 1) {
+        if(!boxes || boxes.length < 1) {
           return
         }
 
