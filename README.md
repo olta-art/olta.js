@@ -27,6 +27,7 @@ It let's you build artworks with persistent state changes in a decentralized man
       - [read the state](#read-the-state)
       - [Create A Document](#create-a-document)
       - [Update A Document](#update-a-document)
+      - [Delete A Document](#delete-a-document)
   - [Examples](#examples)
     - [tiles](#tiles)
     - [rectangles](#rectangles)
@@ -374,6 +375,28 @@ document.addEventListener("click", () => {
   olta.update("colors", updatedDoc)
 })
 
+```
+## Delete A Document
+
+To delete a document from a given collection, you can use the `deleteDoc` function.
+
+#### Parameters:
+- `collectionId` (string): The ID of the collection from which you want to delete the document.
+- `documentId` (string): The ID of the document you want to delete.
+
+### Example
+
+```javascript
+// store the colors collection
+let colors = []
+
+// get a random index from the colors array
+const randomIndex = math.floor(math.random() * colors.length)
+
+// the chosen doc
+const doc = colors[randomIndex]
+
+document.addEventListener("click", olta.deleteDoc("colors", doc._id))
 ```
 ---
 
