@@ -21,7 +21,9 @@ export const initialState = {
         "create": "closed",
         "createType": "set",
         "update": "open",
-        "updateType": "set"
+        "updateType": "set",
+        "remove": "admin",
+        "removeType": "set"
       }
     }
   },
