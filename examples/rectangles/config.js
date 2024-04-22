@@ -42,7 +42,9 @@ export const initialState = {
         "create": "open",
         "createType": "set",
         "update": "open",
-        "updateType": "set"
+        "updateType": "set",
+        "remove": "admin",
+        "removeType": "set"
       }
     }
   },
