@@ -376,6 +376,10 @@ document.addEventListener("click", () => {
 })
 
 ```
+## Retrieve active wallet address
+
+To retrieve the current wallet address stored in the project state (which you might want for displaying the wallet that created the current interaction), you can use the `getActiveWalletAddress` function.
+
 ## Delete A Document
 
 To delete a document from a given collection, you can use the `deleteDoc` function.
