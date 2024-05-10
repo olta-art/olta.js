@@ -1,0 +1,53 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+}
+
+/* Loading New Artwork */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+}
+
+#popupMessage {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  width: 40%;
+  padding: 8px;
+  border-radius: 5px;
+  align-items: center;
+  gap: 20px;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff40;
+  justify-content: space-evenly;
+}
+
+#loadingDiv {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(-90deg) translate(50%, -50%);
+  
+  width: 10%;
+}
+
+#loadingText {
+  color: #fff;
+  font-size: 1rem;
+  font-family: Monospace;
+  position: relative;
+}
+/* ---------------------- */
