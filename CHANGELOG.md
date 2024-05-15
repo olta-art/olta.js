@@ -9,3 +9,7 @@
 ## 0.2.0
 ### Feature Changes
 - Added feature to retrieve the active wallet address from the project state.
+
+## 0.2.1
+### Fixes
+- Added feature to olta.module.js as well
