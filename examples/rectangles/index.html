@@ -9,11 +9,30 @@
 
   <body>
     <!-- Loading Elements -->
+    <!-- Make sure you import the style.css file like the one above, inside the header tag.
+      Alternatively you can add the custom CSS properties from it into your own css files -->
     <div id="loadingOverlay">
       <div id="loadingDiv">
         <svg viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="#FFFFFF50" stroke-width="10" />
-          <circle id="progress" cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="11" stroke-dasharray="0 283" stroke-linecap="round" />
+          <circle
+            cx="50"
+            cy="50"
+            r="45"
+            fill="none"
+            stroke="#FFFFFF50"
+            stroke-width="10"
+          />
+          <circle
+            id="progress"
+            cx="50"
+            cy="50"
+            r="45"
+            fill="none"
+            stroke="white"
+            stroke-width="11"
+            stroke-dasharray="0 283"
+            stroke-linecap="round"
+          />
         </svg>
       </div>
       <div id="popupMessage">
@@ -30,16 +49,30 @@
       // First we need to initialize Olta in a variable like this
       const olta = Olta();
 
-      // ----------- Loading Logic ----------- 
+      // ----------- Loading Logic -----------
       const timerSeconds = 1000; // Time between creating new interactions, in milliseconds (1000 = 10 seconds)
-      const loadingOverlay = document.getElementById("loadingOverlay");
+
+      const progress = document.getElementById("progress");
       const loadingText = document.getElementById("loadingText");
-      const progress = document.getElementById('progress');
-      let walletAddress;
-      let message = "Thanks for collaborating with the artwork!";
-      loadingText.innerText = message;
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      let walletAddress, fullWalletAddress, currentMessage;
       let loading = false;
       let timeLeft = timerSeconds;
+
+      // This is the default message the user will see when they interact before logging in (usually the first interaction)
+      const defaultMessage =
+        "Thanks for collaborating! Please make sure you are logged in";
+
+      // This is the array of possible messages that will be displayed to the user after interacting.
+      // Go ahead and add your own ideas, make it sound like yourself!
+      // Just be sure to keep the ${walletAddress} in the places you want it replaced by the user's Wallet Address
+      let messages = [
+        "${walletAddress} Thank you for your contribution!",
+        "Hi ${walletAddress}! You left your mark! 👍",
+        "You're way cooler than people think 😎 ${walletAddress}",
+        "Thanks for participating ${walletAddress}! 🔥",
+        "Hi ${walletAddress}! Thanks for collaborating with the artwork :)",
+      ];
       // --------------------------------------
 
       let boxes = []; // Array that will receive the collection documents (aka user transactions)
@@ -57,13 +90,10 @@
         // This function runs all the time, retrieving transactions from Arweave via Warp
         olta.onUpdate(() => {
           boxes = olta.getAll("boxes"); // The boxes array gets the transactions
-          walletAddress = olta.getActiveWalletAddress(); // This function retrieves the connected Othent Wallet to display while interacting
 
-          // This adds the wallet address to the message, if Othent wallet was found during previous step
-          if (walletAddress) {
-            loadingText.innerText =
-              walletAddress.slice(0, 4) + "..." + walletAddress.slice(-4) + " " + message;
-          }
+          // -Loading-
+          // This function retrieves the connected Othent Wallet to display while interacting
+          fullWalletAddress = olta.getActiveWalletAddress();
 
           // only update the boxes if there are new boxes
           if (!boxes || boxes.length < 1) {
@@ -88,12 +118,12 @@
           // Displaying the loading elements
           loadingOverlay.style.display = "block";
 
-          // Starting timer to prevent user from interacting and for duration of loading elements
+          // Starting timer to prevent user from interacting for duration of loading feature
           var timer = setInterval(() => {
             timeLeft -= 1;
             const dashOffset = ((timerSeconds - timeLeft) / timerSeconds) * 283;
             progress.style.strokeDasharray = `${dashOffset} 360`;
-            // When the timer finished, reset status
+            // When the timer finishes, reset status
             if (timeLeft <= 0) {
               loading = false;
               clearInterval(timer);
@@ -102,7 +132,7 @@
             }
           }, 10);
         } else {
-          // When there's no loading, reset the status
+          // When there's no loading state, reset the status
           timeLeft = timerSeconds;
           loadingOverlay.style.display = "none";
         }
@@ -157,8 +187,15 @@
           // add the box to the pendingBoxes array so we can render it in the p5 draw function
           pendingBoxes.push(box);
 
+          // ----------- Loading Logic -----------
           loading = true;
           timeLeft = timerSeconds;
+
+          generateRandomMessage().then((message) => {
+            currentMessage = message;
+            loadingText.innerHTML = currentMessage;
+          });
+          // -------------------------------------
 
           // trigger p5 draw function
           loop();
@@ -174,6 +211,25 @@
       // utils
       function percentageOf(value, percent) {
         return value * (percent * 0.01);
+      }
+
+      // ----------- Function for Loading Logic -----------
+      async function generateRandomMessage() {
+        let fullWalletAddress = await olta.getActiveWalletAddress();
+        if (fullWalletAddress) {
+          let walletAddress =
+            fullWalletAddress.slice(0, 4) + "..." + fullWalletAddress.slice(-4);
+          let randomIndex = Math.floor(Math.random() * messages.length);
+
+          let finalMessage = messages[randomIndex].replace(
+            "${walletAddress}",
+            `<strong>${walletAddress}</strong>`
+          );
+
+          return finalMessage;
+        } else {
+          return defaultMessage;
+        }
       }
     </script>
   </body>
