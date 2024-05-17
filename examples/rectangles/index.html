@@ -55,6 +55,9 @@
       const progress = document.getElementById("progress");
       const loadingText = document.getElementById("loadingText");
       const loadingOverlay = document.getElementById("loadingOverlay");
+
+      let timeout
+      let runningPlayback =  false
       let walletAddress, fullWalletAddress, currentMessage;
       let loading = false;
       let timeLeft = timerSeconds;
@@ -172,33 +175,56 @@
       // mousePressed should catch all touchStarted events as well
       // docs: https://p5js.org/reference/#/p5/touchStarted
       function mousePressed() {
-        // create a random new box based on mouse position
-        const box = {
-          color: Math.random() * 255,
-          size: 1 + Math.random() * 2,
-          x: (mouseX / windowWidth) * 100,
-          y: (mouseY / windowHeight) * 100,
-        };
+        clearTimeout(timeout);
 
-        // create a new box at the location of the mouse
-        if (!loading) {
-          olta.create("boxes", box);
+        if (runningPlayback === true) {
+          clear();
+          background(0);
+          
+          pendingBoxes = []
 
-          // add the box to the pendingBoxes array so we can render it in the p5 draw function
-          pendingBoxes.push(box);
+          const list = olta.getAll("boxes");
 
-          // ----------- Loading Logic -----------
-          loading = true;
-          timeLeft = timerSeconds;
+          list.forEach((item, index) => {
+            const x = percentageOf(windowWidth, item.x);
+            const y = percentageOf(windowHeight, item.y);
 
-          generateRandomMessage().then((message) => {
-            currentMessage = message;
-            loadingText.innerHTML = currentMessage;
+            fill(item.color);
+            rect(x, y, item.size * scale, item.size * scale);
           });
-          // -------------------------------------
 
-          // trigger p5 draw function
-          loop();
+          runningPlayback = false
+        } else {
+          // create a random new box based on mouse position
+          const box = {
+            color: Math.random() * 255,
+            size: 1 + Math.random() * 2,
+            x: (mouseX / windowWidth) * 100,
+            y: (mouseY / windowHeight) * 100,
+          };
+
+            // create a new box at the location of the mouse
+          if (!loading) {
+            olta.create("boxes", box);
+
+            // add the box to the pendingBoxes array so we can render it in the p5 draw function
+            pendingBoxes.push(box);
+
+            // ----------- Loading Logic -----------
+            loading = true;
+            timeLeft = timerSeconds;
+
+            generateRandomMessage().then((message) => {
+              currentMessage = message;
+              loadingText.innerHTML = currentMessage;
+            });
+            // -------------------------------------
+
+            // trigger p5 draw function
+            loop();
+          } 
+
+          timeoutFunction()
         }
       }
 
@@ -231,6 +257,50 @@
           return defaultMessage;
         }
       }
+
+      function timeoutFunction() {
+        timeout = setTimeout(() => {
+          runningPlayback = true
+
+          const list = olta.getAll("boxes");
+          const initialStateItems = list.filter(
+            (item) => typeof item._id === "number"
+          );
+          const itemsToShow = list.slice(initialStateItems.length)
+
+          let showQueue = [];
+
+          clear();
+          background(0);
+
+          initialStateItems.map((box) => {
+            const x = percentageOf(windowWidth, box.x);
+            const y = percentageOf(windowHeight, box.y);
+            fill(box.color);
+            rect(x, y, box.size * scale, box.size * scale);
+          });
+
+          itemsToShow.map((item, index) => {
+            setTimeout(() => {
+              if (runningPlayback === false ) {
+                return
+              }
+
+              const x = percentageOf(windowWidth, item.x);
+              const y = percentageOf(windowHeight, item.y);
+
+              fill(item.color);
+              rect(x, y, item.size * scale, item.size * scale);
+
+              if (index === (itemsToShow.length - 1)) {
+                runningPlayback = false
+              }
+            }, index * 15000);
+          });
+        }, 300000);
+      }
+
+      timeoutFunction()
     </script>
   </body>
 </html>
