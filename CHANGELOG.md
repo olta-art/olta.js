@@ -29,3 +29,9 @@
 - Included is also a message functionality that displays a message for the user interacting.
   The first interaction will display a default message instructing the user to sign-in, and the next ones
   will get a random message from the messages array each time. Feel free to add in your own custom messages!
+
+## 0.3.1
+
+### Fixes
+
+- Fixed messages panel (for user interaction) position, which was being overlayed by embed's footer
