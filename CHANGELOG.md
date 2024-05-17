@@ -35,3 +35,9 @@
 ### Fixes
 
 - Fixed messages panel (for user interaction) position, which was being overlayed by embed's footer
+
+## 0.3.2
+
+### Fixes
+
+- Fixed messages panel spinner and width of panel
