@@ -231,6 +231,25 @@
           return defaultMessage;
         }
       }
+
+      setTimeout(() => {
+        const itemsToShow = olta.getAll("boxes");
+        const initialStateItems = itemsToShow.filter(item => typeof item._id === 'number');
+        let showQueue = [];
+
+        clear();
+        background(0);
+
+        itemsToShow.map((item, index) => {
+          setTimeout(() => {
+            const x = percentageOf(windowWidth, item.x);
+            const y = percentageOf(windowHeight, item.y);
+
+            fill(item.color);
+            rect(x, y, item.size * scale, item.size * scale);
+          }, index * 4000);
+        });
+      }, 5000);
     </script>
   </body>
 </html>
