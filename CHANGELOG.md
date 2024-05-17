@@ -41,3 +41,9 @@
 ### Fixes
 
 - Fixed messages panel spinner and width of panel
+
+## 0.3.3
+
+### Feature Changes
+
+- Adding playback function to the rectangles example
