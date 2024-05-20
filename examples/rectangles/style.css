@@ -24,7 +24,7 @@ canvas {
   display: flex;
   position: absolute;
   left: 50%;
-  bottom: 40px;
+  bottom: 35px;
   width: 40%;
   padding: 8px;
   border-radius: 5px;
@@ -137,6 +137,20 @@ canvas {
 
   #popupMessage {
     width: 55%;
+  }
+}
+
+/* Code for when device is on landscape mode - will override previous values */
+@media only screen and (orientation: landscape) {
+  #loadingDiv {
+    width: 10%;
+  }
+}
+
+/* Code for when device is on portrait mode - will override previous values */
+@media only screen and (orientation: portrait) {
+  #popupMessage {
+    bottom: 55px;
   }
 }
 /* ---------------------- */
