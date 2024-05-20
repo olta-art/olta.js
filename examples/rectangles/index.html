@@ -56,8 +56,8 @@
       const loadingText = document.getElementById("loadingText");
       const loadingOverlay = document.getElementById("loadingOverlay");
 
-      let timeout
-      let runningPlayback =  false
+      let timeout;
+      let runningPlayback = false;
       let walletAddress, fullWalletAddress, currentMessage;
       let loading = false;
       let timeLeft = timerSeconds;
@@ -74,7 +74,7 @@
         "Hi ${walletAddress}! You left your mark! 👍",
         "You're way cooler than people think 😎 ${walletAddress}",
         "Thanks for participating ${walletAddress}! 🔥",
-        "Hi ${walletAddress}! Thanks for collaborating with the artwork :)",
+        "Hi ${walletAddress}! Thanks for collaborating :)",
       ];
       // --------------------------------------
 
@@ -180,8 +180,8 @@
         if (runningPlayback === true) {
           clear();
           background(0);
-          
-          pendingBoxes = []
+
+          pendingBoxes = [];
 
           const list = olta.getAll("boxes");
 
@@ -193,7 +193,7 @@
             rect(x, y, item.size * scale, item.size * scale);
           });
 
-          runningPlayback = false
+          runningPlayback = false;
         } else {
           // create a random new box based on mouse position
           const box = {
@@ -203,7 +203,7 @@
             y: (mouseY / windowHeight) * 100,
           };
 
-            // create a new box at the location of the mouse
+          // create a new box at the location of the mouse
           if (!loading) {
             olta.create("boxes", box);
 
@@ -222,9 +222,9 @@
 
             // trigger p5 draw function
             loop();
-          } 
+          }
 
-          timeoutFunction()
+          timeoutFunction();
         }
       }
 
@@ -260,13 +260,13 @@
 
       function timeoutFunction() {
         timeout = setTimeout(() => {
-          runningPlayback = true
+          runningPlayback = true;
 
           const list = olta.getAll("boxes");
           const initialStateItems = list.filter(
             (item) => typeof item._id === "number"
           );
-          const itemsToShow = list.slice(initialStateItems.length)
+          const itemsToShow = list.slice(initialStateItems.length);
 
           let showQueue = [];
 
@@ -282,8 +282,8 @@
 
           itemsToShow.map((item, index) => {
             setTimeout(() => {
-              if (runningPlayback === false ) {
-                return
+              if (runningPlayback === false) {
+                return;
               }
 
               const x = percentageOf(windowWidth, item.x);
@@ -292,15 +292,15 @@
               fill(item.color);
               rect(x, y, item.size * scale, item.size * scale);
 
-              if (index === (itemsToShow.length - 1)) {
-                runningPlayback = false
+              if (index === itemsToShow.length - 1) {
+                runningPlayback = false;
               }
-            }, index * 15000);
+            }, index * 2000);
           });
         }, 300000);
       }
 
-      timeoutFunction()
+      timeoutFunction();
     </script>
   </body>
 </html>

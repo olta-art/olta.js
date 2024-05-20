@@ -47,3 +47,10 @@
 ### Feature Changes
 
 - Adding playback function to the rectangles example
+
+## 0.3.4
+
+### Fixes
+
+- Fixed time for playback function and added portrait/landscape styles on rectangles project
+- Removed extra files
