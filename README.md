@@ -28,6 +28,7 @@ It let's you build artworks with persistent state changes in a decentralized man
       - [Create A Document](#create-a-document)
       - [Update A Document](#update-a-document)
       - [Delete A Document](#delete-a-document)
+      - [List Documents By Wallet ID](#list-documents-by-wallet-id)
   - [Examples](#examples)
     - [tiles](#tiles)
     - [rectangles](#rectangles)
@@ -402,6 +403,21 @@ const doc = colors[randomIndex]
 
 document.addEventListener("click", olta.deleteDoc("colors", doc._id))
 ```
+
+## List Documents By User Wallet
+
+To list all documents added by the logged in user, you can use the function `listByWalletId`
+
+#### Parameters:
+- `collectionId` (string): The ID of the collection from which you want to list the documents
+
+### Example
+
+```javascript
+// List documents based in the logged in users
+const documents = olta.listByWalletId("colors")
+```
+
 ---
 
 <!-- TODO publishing (vercel, or arweave) -->
