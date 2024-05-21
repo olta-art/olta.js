@@ -54,3 +54,9 @@
 
 - Fixed time for playback function and added portrait/landscape styles on rectangles project
 - Removed extra files
+
+## 0.3.5
+
+### Feature Changes
+
+- Adding new function that list documents by user wallet
