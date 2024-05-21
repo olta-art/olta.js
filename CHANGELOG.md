@@ -60,3 +60,9 @@
 ### Feature Changes
 
 - Adding new function that list documents by user wallet
+
+## 0.3.6
+
+### Fixes
+
+- Add play, pause and stop button in rectangles example
