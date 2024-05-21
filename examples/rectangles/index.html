@@ -6,69 +6,57 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <title>Example p5 Project</title>
   </head>
-
   <body>
-    <!-- Loading Elements -->
-    <!-- Make sure you import the style.css file like the one above, inside the header tag.
-      Alternatively you can add the custom CSS properties from it into your own css files -->
     <div id="loadingOverlay">
       <div id="loadingDiv">
         <svg viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            fill="none"
-            stroke="#FFFFFF50"
-            stroke-width="10"
-          />
-          <circle
-            id="progress"
-            cx="50"
-            cy="50"
-            r="45"
-            fill="none"
-            stroke="white"
-            stroke-width="11"
-            stroke-dasharray="0 283"
-            stroke-linecap="round"
-          />
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#FFFFFF50" stroke-width="10" />
+          <circle id="progress" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="11" stroke-dasharray="0 283" stroke-linecap="round" />
         </svg>
       </div>
       <div id="popupMessage">
         <span id="loadingText"></span>
       </div>
     </div>
-    <!-- Loading Elements -->
 
-    <!-- Importing p5 and Olta libraries -->
+    <button id="playPauseButton">
+      <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <path d="M8 5v14l11-7z" fill="white"/>
+      </svg>
+      <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" style="display:none;">
+        <path d="M6 19h4V5H6zm8-14v14h4V5z" fill="white"/>
+      </svg>      
+    </button>
+    <button id="stopButton">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <path d="M6 6h12v12H6z" fill="white"/>
+      </svg>      
+    </button>
+
     <script src="../../lib/p5.min.js"></script>
     <script src="../../lib/olta.js"></script>
-
     <script>
-      // First we need to initialize Olta in a variable like this
       const olta = Olta();
-
-      // ----------- Loading Logic -----------
       const timerSeconds = 1000; // Time between creating new interactions, in milliseconds (1000 = 10 seconds)
-
       const progress = document.getElementById("progress");
       const loadingText = document.getElementById("loadingText");
       const loadingOverlay = document.getElementById("loadingOverlay");
+      const playPauseButton = document.getElementById("playPauseButton");
+      const stopButton = document.getElementById("stopButton");
+      const playIcon = document.getElementById("playIcon");
+      const pauseIcon = document.getElementById("pauseIcon");
 
+      let initialStateItems = [];
+      let itemsToShow = [];
+      let showQueue = [];
       let timeout;
       let runningPlayback = false;
       let walletAddress, fullWalletAddress, currentMessage;
       let loading = false;
       let timeLeft = timerSeconds;
 
-      // This is the default message the user will see when they interact before logging in (usually the first interaction)
-      const defaultMessage =
-        "Thanks for collaborating! Please make sure you are logged in";
+      const defaultMessage = "Thanks for collaborating! Please make sure you are logged in";
 
-      // This is the array of possible messages that will be displayed to the user after interacting.
-      // Go ahead and add your own ideas, make it sound like yourself!
-      // Just be sure to keep the ${walletAddress} in the places you want it replaced by the user's Wallet Address
       let messages = [
         "${walletAddress} Thank you for your contribution!",
         "Hi ${walletAddress}! You left your mark! 👍",
@@ -76,37 +64,26 @@
         "Thanks for participating ${walletAddress}! 🔥",
         "Hi ${walletAddress}! Thanks for collaborating :)",
       ];
-      // --------------------------------------
 
-      let boxes = []; // Array that will receive the collection documents (aka user transactions)
-      let pendingBoxes = []; // Supporting array to display temporary objects before transactions come through
-
+      let boxes = [];
+      let pendingBoxes = [];
       const scale = 20;
 
       function setup() {
         createCanvas(displayWidth, displayHeight);
         background(0);
         noStroke();
-
         rectMode(CENTER);
 
-        // This function runs all the time, retrieving transactions from Arweave via Warp
         olta.onUpdate(() => {
-          boxes = olta.getAll("boxes"); // The boxes array gets the transactions
-
-          // -Loading-
-          // This function retrieves the connected Othent Wallet to display while interacting
+          boxes = olta.getAll("boxes");
+          initialStateItems = boxes?.filter(item => typeof item?._id === "number");
+          itemsToShow = boxes?.slice(initialStateItems?.length);
           fullWalletAddress = olta.getActiveWalletAddress();
-
-          // only update the boxes if there are new boxes
           if (!boxes || boxes.length < 1) {
             return;
           }
-
-          // reset pending boxes
           pendingBoxes = [];
-
-          // trigger p5 draw function
           loop();
         });
       }
@@ -114,19 +91,12 @@
       function draw() {
         background(0);
         noStroke();
-
-        // ----------- Loading Logic -----------
-        // Checking if the artwork is in a loading state
         if (loading) {
-          // Displaying the loading elements
           loadingOverlay.style.display = "block";
-
-          // Starting timer to prevent user from interacting for duration of loading feature
           var timer = setInterval(() => {
             timeLeft -= 1;
             const dashOffset = ((timerSeconds - timeLeft) / timerSeconds) * 283;
             progress.style.strokeDasharray = `${dashOffset} 360`;
-            // When the timer finishes, reset status
             if (timeLeft <= 0) {
               loading = false;
               clearInterval(timer);
@@ -135,172 +105,153 @@
             }
           }, 10);
         } else {
-          // When there's no loading state, reset the status
           timeLeft = timerSeconds;
           loadingOverlay.style.display = "none";
         }
-        // ------------------------------------------------
 
         if (!boxes || boxes.length < 1) {
           return;
         }
 
-        // draw boxes
-        boxes?.forEach((box, index) => {
-          // convert box.x and box.y from a percentage to coordinates
+        boxes?.forEach((box) => {
           const x = percentageOf(windowWidth, box.x);
           const y = percentageOf(windowHeight, box.y);
-
-          // render box
           fill(box.color);
           rect(x, y, box.size * scale, box.size * scale);
         });
 
-        // draw pending boxes
-        noFill();
-        pendingBoxes?.forEach((pendingBox, index) => {
-          // convert pendingBox.x and pendingBox.y from a percentage to coordinates
+        pendingBoxes?.forEach((pendingBox) => {
           const x = percentageOf(windowWidth, pendingBox.x);
           const y = percentageOf(windowHeight, pendingBox.y);
-
-          // render outline of pending box
           stroke(255, 0, 0);
           rect(x, y, pendingBox.size * scale, pendingBox.size * scale);
         });
 
-        // only run draw function once
         noLoop();
       }
 
-      // mousePressed should catch all touchStarted events as well
-      // docs: https://p5js.org/reference/#/p5/touchStarted
-      function mousePressed() {
-        clearTimeout(timeout);
-
-        if (runningPlayback === true) {
-          clear();
-          background(0);
-
-          pendingBoxes = [];
-
-          const list = olta.getAll("boxes");
-
-          list.forEach((item, index) => {
-            const x = percentageOf(windowWidth, item.x);
-            const y = percentageOf(windowHeight, item.y);
-
-            fill(item.color);
-            rect(x, y, item.size * scale, item.size * scale);
-          });
-
-          runningPlayback = false;
+      function mousePressed(e) {
+        if (e.target.closest("#playPauseButton")) {
+          togglePlayback();
+        } else if (e.target.closest("#stopButton")) { 
+          stopPlayback();
         } else {
-          // create a random new box based on mouse position
-          const box = {
-            color: Math.random() * 255,
-            size: 1 + Math.random() * 2,
-            x: (mouseX / windowWidth) * 100,
-            y: (mouseY / windowHeight) * 100,
-          };
-
-          // create a new box at the location of the mouse
-          if (!loading) {
-            olta.create("boxes", box);
-
-            // add the box to the pendingBoxes array so we can render it in the p5 draw function
-            pendingBoxes.push(box);
-
-            // ----------- Loading Logic -----------
-            loading = true;
-            timeLeft = timerSeconds;
-
-            generateRandomMessage().then((message) => {
-              currentMessage = message;
-              loadingText.innerHTML = currentMessage;
+          clearTimeout(timeout);
+          if (runningPlayback === true) {
+            clear();
+            background(0);
+            pendingBoxes = [];
+            const list = olta.getAll("boxes");
+            list.forEach((item) => {
+              const x = percentageOf(windowWidth, item.x);
+              const y = percentageOf(windowHeight, item.y);
+              fill(item.color);
+              rect(x, y, item.size * scale, item.size * scale);
             });
-            // -------------------------------------
-
-            // trigger p5 draw function
-            loop();
+            runningPlayback = false;
+          } else {
+            const box = {
+              color: Math.random() * 255,
+              size: 1 + Math.random() * 2,
+              x: (mouseX / windowWidth) * 100,
+              y: (mouseY / windowHeight) * 100,
+            };
+            if (!loading) {
+              olta.create("boxes", box);
+              pendingBoxes.push(box);
+              loading = true;
+              timeLeft = timerSeconds;
+              generateRandomMessage().then((message) => {
+                currentMessage = message;
+                loadingText.innerHTML = currentMessage;
+              });
+              loop();
+            }
           }
-
-          timeoutFunction();
         }
       }
 
       function windowResized() {
         resizeCanvas(windowWidth, windowHeight);
-        // trigger p5 draw function on resize
         loop();
       }
 
-      // utils
       function percentageOf(value, percent) {
         return value * (percent * 0.01);
       }
 
-      // ----------- Function for Loading Logic -----------
       async function generateRandomMessage() {
         let fullWalletAddress = await olta.getActiveWalletAddress();
         if (fullWalletAddress) {
           let walletAddress =
             fullWalletAddress.slice(0, 4) + "..." + fullWalletAddress.slice(-4);
           let randomIndex = Math.floor(Math.random() * messages.length);
-
           let finalMessage = messages[randomIndex].replace(
             "${walletAddress}",
             `<strong>${walletAddress}</strong>`
           );
-
           return finalMessage;
         } else {
           return defaultMessage;
         }
       }
 
-      function timeoutFunction() {
-        timeout = setTimeout(() => {
-          runningPlayback = true;
-
-          const list = olta.getAll("boxes");
-          const initialStateItems = list.filter(
-            (item) => typeof item._id === "number"
-          );
-          const itemsToShow = list.slice(initialStateItems.length);
-
-          let showQueue = [];
-
-          clear();
-          background(0);
-
-          initialStateItems.map((box) => {
-            const x = percentageOf(windowWidth, box.x);
-            const y = percentageOf(windowHeight, box.y);
-            fill(box.color);
-            rect(x, y, box.size * scale, box.size * scale);
-          });
-
-          itemsToShow.map((item, index) => {
-            setTimeout(() => {
-              if (runningPlayback === false) {
-                return;
-              }
-
-              const x = percentageOf(windowWidth, item.x);
-              const y = percentageOf(windowHeight, item.y);
-
-              fill(item.color);
-              rect(x, y, item.size * scale, item.size * scale);
-
-              if (index === itemsToShow.length - 1) {
-                runningPlayback = false;
-              }
-            }, index * 2000);
-          });
-        }, 300000);
+      function togglePlayback() {
+        if (runningPlayback) {
+          pausePlayback();
+        } else {
+          startPlayback();
+        }
       }
 
-      timeoutFunction();
+      function startPlayback() {
+        runningPlayback = true;
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
+        clear();
+        background(0);
+        initialStateItems?.map((box) => {
+          const x = percentageOf(windowWidth, box.x);
+          const y = percentageOf(windowHeight, box.y);
+          fill(box.color);
+          rect(x, y, box.size * scale, box.size * scale);
+        });
+
+        itemsToShow?.map((item, index) => {
+          setTimeout(() => {
+            if (!runningPlayback) return;
+            const x = percentageOf(windowWidth, item.x);
+            const y = percentageOf(windowHeight, item.y);
+            fill(item.color);
+            rect(x, y, item.size * scale, item.size * scale);
+            if (index === itemsToShow.length - 1) {
+              runningPlayback = false;
+              playIcon.style.display = "block";
+              pauseIcon.style.display = "none";
+            }
+          }, index * 2000);
+        });
+      }
+
+      function pausePlayback() {
+        runningPlayback = false;
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+      }
+
+      function stopPlayback() {
+        runningPlayback = false;
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+        clear();
+        background(0);
+        boxes.forEach((box) => {
+          const x = percentageOf(windowWidth, box.x);
+          const y = percentageOf(windowHeight, box.y);
+          fill(box.color);
+          rect(x, y, box.size * scale, box.size * scale);
+        });
+      }
     </script>
   </body>
 </html>
