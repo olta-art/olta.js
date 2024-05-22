@@ -66,3 +66,9 @@
 ### Fixes
 
 - Add play, pause and stop button in rectangles example
+
+## 0.3.7
+
+### Fixes
+
+- Fiz interactions in the rectangles example
