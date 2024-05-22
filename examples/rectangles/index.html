@@ -131,12 +131,19 @@
       function draw() {
         background(0);
         noStroke();
+
+        // ----------- Loading Logic -----------
+        // Checking if the artwork is in a loading state
         if (loading) {
+          // Displaying the loading elements
           loadingOverlay.style.display = "block";
+
+          // Starting timer to prevent user from interacting for duration of loading feature
           var timer = setInterval(() => {
             timeLeft -= 1;
             const dashOffset = ((timerSeconds - timeLeft) / timerSeconds) * 283;
             progress.style.strokeDasharray = `${dashOffset} 360`;
+            // When the timer finishes, reset status
             if (timeLeft <= 0) {
               loading = false;
               clearInterval(timer);
@@ -145,28 +152,40 @@
             }
           }, 10);
         } else {
+          // When there's no loading state, reset the status
           timeLeft = timerSeconds;
           loadingOverlay.style.display = "none";
         }
+        // ------------------------------------------------
 
         if (!boxes || boxes.length < 1) {
           return;
         }
 
-        boxes?.forEach((box) => {
+        // draw boxes
+        boxes?.forEach((box, index) => {
+          // convert box.x and box.y from a percentage to coordinates
           const x = percentageOf(windowWidth, box.x);
           const y = percentageOf(windowHeight, box.y);
+
+          // render box
           fill(box.color);
           rect(x, y, box.size * scale, box.size * scale);
         });
 
-        pendingBoxes?.forEach((pendingBox) => {
+        // draw pending boxes
+        noFill();
+        pendingBoxes?.forEach((pendingBox, index) => {
+          // convert pendingBox.x and pendingBox.y from a percentage to coordinates
           const x = percentageOf(windowWidth, pendingBox.x);
           const y = percentageOf(windowHeight, pendingBox.y);
+
+          // render outline of pending box
           stroke(255, 0, 0);
           rect(x, y, pendingBox.size * scale, pendingBox.size * scale);
         });
 
+        // only run draw function once
         noLoop();
       }
 
@@ -176,7 +195,6 @@
         } else if (e.target.closest("#stopButton")) {
           stopPlayback();
         } else {
-          clearTimeout(timeout);
           if (runningPlayback === true) {
             clear();
             background(0);
@@ -190,21 +208,32 @@
             });
             runningPlayback = false;
           } else {
+            // create a random new box based on mouse position
             const box = {
               color: Math.random() * 255,
               size: 1 + Math.random() * 2,
               x: (mouseX / windowWidth) * 100,
               y: (mouseY / windowHeight) * 100,
             };
+
+            // create a new box at the location of the mouse
             if (!loading) {
               olta.create("boxes", box);
+
+              // add the box to the pendingBoxes array so we can render it in the p5 draw function
               pendingBoxes.push(box);
+
+              // ----------- Loading Logic -----------
               loading = true;
               timeLeft = timerSeconds;
+
               generateRandomMessage().then((message) => {
                 currentMessage = message;
                 loadingText.innerHTML = currentMessage;
               });
+              // -------------------------------------
+
+              // trigger p5 draw function
               loop();
             }
           }
@@ -251,13 +280,10 @@
         timeoutIds = [];
       }
 
-
       function startPlayback() {
         clearAllTimeouts();
 
         if (pausedPlayback === true) {
-          console.log("CAIU NO IF");
-
           playIcon.style.display = "none";
           pauseIcon.style.display = "block";
 
