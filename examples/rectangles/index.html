@@ -189,7 +189,7 @@
         noLoop();
       }
 
-      function mousePressed(e) {
+      function handleInteraction(e) {
         if (e.target.closest("#playPauseButton")) {
           togglePlayback();
         } else if (e.target.closest("#stopButton")) {
@@ -238,6 +238,14 @@
             }
           }
         }
+      }
+
+      function mousePressed(e) {
+        handleInteraction(e)
+      }
+
+      function touchStarted(e) {
+        handleInteraction(e)
       }
 
       function windowResized() {
