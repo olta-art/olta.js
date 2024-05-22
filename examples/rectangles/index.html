@@ -362,6 +362,7 @@
       }
 
       function stopPlayback() {
+        pausedPlayback = false;
         runningPlayback = false;
         clearInterval(intervalId);
         playIcon.style.display = "block";
