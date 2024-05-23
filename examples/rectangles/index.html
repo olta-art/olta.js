@@ -262,15 +262,6 @@
         { passive: false }
       );
 
-      document.addEventListener(
-        "click",
-        function (event) {
-          event.preventDefault();
-          mousePressed(event);
-        },
-        { passive: false }
-      );
-
       function percentageOf(value, percent) {
         return value * (percent * 0.01);
       }
