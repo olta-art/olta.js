@@ -257,7 +257,16 @@
         "touchstart",
         function (event) {
           event.preventDefault();
-          touchStarted();
+          touchStarted(event);
+        },
+        { passive: false }
+      );
+
+      document.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault();
+          mousePressed(event);
         },
         { passive: false }
       );
