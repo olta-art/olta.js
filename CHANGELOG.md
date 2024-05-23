@@ -79,7 +79,7 @@
 
 - Add touch and click event listeners in rectangles
 
-## 0.3.9
+## 0.3.10
 
 ### Fixes
 
