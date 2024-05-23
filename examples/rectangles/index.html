@@ -241,17 +241,26 @@
       }
 
       function mousePressed(e) {
-        handleInteraction(e)
+        handleInteraction(e);
       }
 
       function touchStarted(e) {
-        handleInteraction(e)
+        handleInteraction(e);
       }
 
       function windowResized() {
         resizeCanvas(windowWidth, windowHeight);
         loop();
       }
+
+      document.addEventListener(
+        "touchstart",
+        function (event) {
+          event.preventDefault();
+          touchStarted();
+        },
+        { passive: false }
+      );
 
       function percentageOf(value, percent) {
         return value * (percent * 0.01);
