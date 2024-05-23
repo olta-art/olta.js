@@ -1,6 +1,6 @@
 {
   "name": "@olta/js-sdk",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "A small js library that communicates with olta dashboard, making it easy to create decentralized artworks with permanent state changes",
   "main": "index.js",
   "type": "module",
