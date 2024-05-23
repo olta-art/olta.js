@@ -189,7 +189,7 @@
         noLoop();
       }
 
-      function mousePressed(e) {
+      function handleInteraction(e) {
         if (e.target.closest("#playPauseButton")) {
           togglePlayback();
         } else if (e.target.closest("#stopButton")) {
@@ -240,10 +240,36 @@
         }
       }
 
+      function mousePressed(e) {
+        handleInteraction(e);
+      }
+
+      function touchStarted(e) {
+        handleInteraction(e);
+      }
+
       function windowResized() {
         resizeCanvas(windowWidth, windowHeight);
         loop();
       }
+
+      document.addEventListener(
+        "touchstart",
+        function (event) {
+          event.preventDefault();
+          touchStarted(event);
+        },
+        { passive: false }
+      );
+
+      document.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault();
+          mousePressed(event);
+        },
+        { passive: false }
+      );
 
       function percentageOf(value, percent) {
         return value * (percent * 0.01);
@@ -354,6 +380,7 @@
       }
 
       function stopPlayback() {
+        pausedPlayback = false;
         runningPlayback = false;
         clearInterval(intervalId);
         playIcon.style.display = "block";
