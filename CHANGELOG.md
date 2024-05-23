@@ -78,3 +78,9 @@
 ### Fixes
 
 - Add touch and click event listeners in rectangles
+
+## 0.3.9
+
+### Fixes
+
+- Remove click event listener
