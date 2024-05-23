@@ -71,4 +71,10 @@
 
 ### Fixes
 
-- Fiz interactions in the rectangles example
+- Fix interactions in the rectangles example
+
+## 0.3.8
+
+### Fixes
+
+- Add touch and click event listeners in rectangles
