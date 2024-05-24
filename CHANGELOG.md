@@ -83,4 +83,10 @@
 
 ### Fixes
 
-- Remove click event listener
+- Remove event listener from rectangles
+
+## 0.3.11
+
+### Fixes
+
+- Change rectangles playback interval to 1 second
