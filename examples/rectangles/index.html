@@ -73,6 +73,7 @@
     <script>
       const olta = Olta();
       const timerSeconds = 1000; // Time between creating new interactions, in milliseconds (1000 = 10 seconds)
+
       const progress = document.getElementById("progress");
       const loadingText = document.getElementById("loadingText");
       const loadingOverlay = document.getElementById("loadingOverlay");
@@ -124,6 +125,7 @@
             return;
           }
           pendingBoxes = [];
+
           loop();
         });
       }
@@ -162,6 +164,11 @@
           return;
         }
 
+        // filter boxes created by logged user
+        const boxesAddedByLoggedUser = boxes.filter((item) => {
+          return item._creator === fullWalletAddress;
+        });
+
         // draw boxes
         boxes?.forEach((box, index) => {
           // convert box.x and box.y from a percentage to coordinates
@@ -169,8 +176,15 @@
           const y = percentageOf(windowHeight, box.y);
 
           // render box
-          fill(box.color);
-          rect(x, y, box.size * scale, box.size * scale);
+          if (boxesAddedByLoggedUser.includes(box)) {
+            fill(box.color);
+            stroke("red");
+            rect(x, y, box.size * scale, box.size * scale);
+          } else {
+            fill(box.color);
+            noStroke();
+            rect(x, y, box.size * scale, box.size * scale);
+          }
         });
 
         // draw pending boxes
@@ -199,12 +213,27 @@
             clear();
             background(0);
             pendingBoxes = [];
+
+            // filter boxes created by logged user
+            const boxesAddedByLoggedUser = boxes.filter((item) => {
+              return item._creator === fullWalletAddress;
+            });
+
             const list = olta.getAll("boxes");
             list.forEach((item) => {
               const x = percentageOf(windowWidth, item.x);
               const y = percentageOf(windowHeight, item.y);
-              fill(item.color);
-              rect(x, y, item.size * scale, item.size * scale);
+
+              // render box
+              if (boxesAddedByLoggedUser.includes(item)) {
+                fill(item.color);
+                stroke("red");
+                rect(x, y, item.size * scale, item.size * scale);
+              } else {
+                fill(item.color);
+                noStroke();
+                rect(x, y, item.size * scale, item.size * scale);
+              }
             });
             runningPlayback = false;
           } else {
@@ -297,92 +326,145 @@
         timeoutIds = [];
       }
 
+      // Function to start or resume the playback
       function startPlayback() {
+        // filter boxes created by logged user
+        const boxesAddedByLoggedUser = boxes.filter((item) => {
+          return item._creator === fullWalletAddress;
+        });
+
+        // Clear any existing timeouts
         clearAllTimeouts();
 
+        // If the playback was paused, resume it
         if (pausedPlayback === true) {
-          playIcon.style.display = "none";
-          pauseIcon.style.display = "block";
+          playIcon.style.display = "none"; // Hide the play icon
+          pauseIcon.style.display = "block"; // Show the pause icon
 
-          pausedPlayback = false;
-          runningPlayback = true;
+          pausedPlayback = false; // Update the paused state
+          runningPlayback = true; // Indicate that playback is running
 
+          // Get the remaining items to show starting from the last displayed item
           const auxItemsToShow = itemsToShow.slice(lastItemDisplayed);
 
-          currentIndex = 0;
+          currentIndex = 0; // Initialize the current index for the interval
           intervalId = setInterval(() => {
+            // If playback is stopped or all items have been shown
             if (!runningPlayback || currentIndex >= auxItemsToShow.length) {
-              clearInterval(intervalId);
-              runningPlayback = false;
-              playIcon.style.display = "block";
-              pauseIcon.style.display = "none";
+              clearInterval(intervalId); // Stop the interval
+              runningPlayback = false; // Update the running state
+              playIcon.style.display = "block"; // Show the play icon
+              pauseIcon.style.display = "none"; // Hide the pause icon
               return;
             }
 
+            // Get the current item to display
             const item = auxItemsToShow[currentIndex];
-            const x = percentageOf(windowWidth, item.x);
-            const y = percentageOf(windowHeight, item.y);
-            fill(item.color);
-            rect(x, y, item.size * scale, item.size * scale);
+            const x = percentageOf(windowWidth, item.x); // Calculate x position
+            const y = percentageOf(windowHeight, item.y); // Calculate y position
 
-            lastItemDisplayed++;
-            currentIndex++;
-          }, 1000);
+            // render box
+            if (boxesAddedByLoggedUser.includes(item)) {
+              fill(item.color);
+              stroke("red");
+              rect(x, y, item.size * scale, item.size * scale);
+            } else {
+              fill(item.color);
+              noStroke();
+              rect(x, y, item.size * scale, item.size * scale);
+            }
+
+            lastItemDisplayed++; // Update the last item displayed
+            currentIndex++; // Move to the next item
+          }, 1000); // Set the interval to 1 second
         } else {
-          runningPlayback = true;
-          playIcon.style.display = "none";
-          pauseIcon.style.display = "block";
-          clear();
-          background(0);
+          // If playback is not paused, start from the beginning
+          runningPlayback = true; // Indicate that playback is running
+          playIcon.style.display = "none"; // Hide the play icon
+          pauseIcon.style.display = "block"; // Show the pause icon
+          clear(); // Clear the canvas
+          background(0); // Set the background color
+
+          // Draw the initial state items
           initialStateItems?.map((box) => {
-            const x = percentageOf(windowWidth, box.x);
-            const y = percentageOf(windowHeight, box.y);
-            fill(box.color);
-            rect(x, y, box.size * scale, box.size * scale);
+            const x = percentageOf(windowWidth, box.x); // Calculate x position
+            const y = percentageOf(windowHeight, box.y); // Calculate y position
+            noStroke();
+            fill(box.color); // Set the fill color
+            rect(x, y, box.size * scale, box.size * scale); // Draw the rectangle
           });
 
-          currentIndex = 0;
+          currentIndex = 0; // Initialize the current index for the interval
           intervalId = setInterval(() => {
+            // If playback is stopped or all items have been shown
             if (!runningPlayback || currentIndex >= itemsToShow.length) {
-              clearInterval(intervalId);
-              runningPlayback = false;
-              playIcon.style.display = "block";
-              pauseIcon.style.display = "none";
+              clearInterval(intervalId); // Stop the interval
+              runningPlayback = false; // Update the running state
+              playIcon.style.display = "block"; // Show the play icon
+              pauseIcon.style.display = "none"; // Hide the pause icon
               return;
             }
 
+            // Get the current item to display
             const item = itemsToShow[currentIndex];
-            const x = percentageOf(windowWidth, item.x);
-            const y = percentageOf(windowHeight, item.y);
-            fill(item.color);
-            rect(x, y, item.size * scale, item.size * scale);
+            const x = percentageOf(windowWidth, item.x); // Calculate x position
+            const y = percentageOf(windowHeight, item.y); // Calculate y position
 
-            lastItemDisplayed = currentIndex;
-            currentIndex++;
-          }, 1000);
+            // render box
+            if (boxesAddedByLoggedUser.includes(item)) {
+              fill(item.color);
+              stroke("red");
+              rect(x, y, item.size * scale, item.size * scale);
+            } else {
+              fill(item.color);
+              noStroke();
+              rect(x, y, item.size * scale, item.size * scale);
+            }
+
+            lastItemDisplayed = currentIndex; // Update the last item displayed
+            currentIndex++; // Move to the next item
+          }, 1000); // Set the interval to 1 second
         }
       }
 
+      // Function to pause the playback
       function pausePlayback() {
-        pausedPlayback = true;
-        playIcon.style.display = "block";
-        pauseIcon.style.display = "none";
-        clearInterval(intervalId);
+        pausedPlayback = true; // Update the paused state
+        playIcon.style.display = "block"; // Show the play icon
+        pauseIcon.style.display = "none"; // Hide the pause icon
+        clearInterval(intervalId); // Stop the interval
       }
 
+      // Function to stop the playback
       function stopPlayback() {
-        pausedPlayback = false;
-        runningPlayback = false;
-        clearInterval(intervalId);
-        playIcon.style.display = "block";
-        pauseIcon.style.display = "none";
-        clear();
-        background(0);
+        pausedPlayback = false; // Update the paused state
+        runningPlayback = false; // Update the running state
+        clearInterval(intervalId); // Stop the interval
+        playIcon.style.display = "block"; // Show the play icon
+        pauseIcon.style.display = "none"; // Hide the pause icon
+        clear(); // Clear the canvas
+        background(0); // Set the background color
+
+        // filter boxes created by logged user
+        const boxesAddedByLoggedUser = boxes.filter((item) => {
+          return item._creator === fullWalletAddress;
+        });
+
+        // Draw all the initial boxes
         boxes.forEach((box) => {
-          const x = percentageOf(windowWidth, box.x);
-          const y = percentageOf(windowHeight, box.y);
-          fill(box.color);
-          rect(x, y, box.size * scale, box.size * scale);
+          const x = percentageOf(windowWidth, box.x); // Calculate x position
+          const y = percentageOf(windowHeight, box.y); // Calculate y position
+
+          // render box
+          if (boxesAddedByLoggedUser.includes(box)) {
+            fill(box.color);
+            stroke("red");
+            rect(x, y, box.size * scale, box.size * scale);
+          } else {
+            fill(box.color);
+            noStroke();
+            rect(x, y, box.size * scale, box.size * scale);
+          }
         });
       }
     </script>

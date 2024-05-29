@@ -90,3 +90,9 @@
 ### Fixes
 
 - Change rectangles playback interval to 1 second
+
+## 0.3.12
+
+### Fixes
+
+- Highlight user interactions in rectangles
