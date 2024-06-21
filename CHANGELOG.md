@@ -96,3 +96,9 @@
 ### Fixes
 
 - Highlight user interactions in rectangles
+
+## 0.4.0
+
+### Feature Changes
+
+- Added captureScreenshot and capture3d (for Three.js projects) and showShareDialog functions, to create screenshots of the artworks and display it in a dialog from the collective.olta.art
