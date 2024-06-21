@@ -28,7 +28,6 @@ It let's you build artworks with persistent state changes in a decentralized man
       - [Create A Document](#create-a-document)
       - [Update A Document](#update-a-document)
       - [Delete A Document](#delete-a-document)
-      - [List Documents By Wallet ID](#list-documents-by-wallet-id)
   - [Examples](#examples)
     - [tiles](#tiles)
     - [rectangles](#rectangles)
@@ -377,11 +376,11 @@ document.addEventListener("click", () => {
 })
 
 ```
-## Retrieve active wallet address
+### Retrieve active wallet address
 
 To retrieve the current wallet address stored in the project state (which you might want for displaying the wallet that created the current interaction), you can use the `getActiveWalletAddress` function.
 
-## Delete A Document
+### Delete A Document
 
 To delete a document from a given collection, you can use the `deleteDoc` function.
 
@@ -404,20 +403,32 @@ const doc = colors[randomIndex]
 document.addEventListener("click", olta.deleteDoc("colors", doc._id))
 ```
 
-## List Documents By User Wallet
+### Sharing Content
 
-To list all documents added by the logged in user, you can use the function `listByWalletId`
+To enable users to share their interactions, you need to implement a screenshot function, wich return a base64 image. The method depends on the technology used:
 
-#### Parameters:
-- `collectionId` (string): The ID of the collection from which you want to list the documents
+- For Three.js: Use `capture3d(renderer)` to capture the screenshot.
+- For P5 or other: Use `captureScreenshot()`.
+
+After obtaining the base64 image, call the `showShareDialog()` function, passing the base64 image as a parameter. These functions are universal; however, the correct timing for capturing a screenshot or displaying the sharing dialog is entirely dependent on the nature and func,ionality of your artwork. This timing can vary significantly from one piece of art to another.
+
+#### Parameters
+- `renderer` (THREE.WebGLRenderer): To capture a screenshot, you need to provide the Three core class to `capture3d()`.
+- `base64Image` (string): The base64 image that will be sight in the sharing dialog. This parameter should be provided to `showShareDialog()`.
 
 ### Example
-
 ```javascript
-// List documents based in the logged in users
-const documents = olta.listByWalletId("colors")
-```
+  // Declare your scene
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
 
+  // Capture your screenshot
+  const base64Image = await capture3d(renderer);
+  // Or 
+  const base64Image = captureScreenshot();
+
+  // Show sharing dialog
+  olta.showShareDialog(base64Image);
+```
 ---
 
 <!-- TODO publishing (vercel, or arweave) -->
